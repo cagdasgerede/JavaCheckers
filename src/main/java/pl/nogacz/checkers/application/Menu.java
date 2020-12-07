@@ -61,7 +61,7 @@ public class Menu extends JFrame implements ActionListener{
             final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             String executionPath = System.getProperty("user.dir");
             System.out.println(executionPath);
-            Process cmd_build = Runtime.getRuntime().exec("gradle -p "+executionPath + " build");
+            //Process cmd_build = Runtime.getRuntime().exec("gradle -p "+executionPath + " build");
             Process cmd_run = Runtime.getRuntime().exec("gradle -p "+executionPath + " run");
             System.exit(0);
         } catch (Exception e) {
