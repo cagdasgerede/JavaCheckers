@@ -77,7 +77,7 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
-        Design.healthBar(board);
+        Design.changeScore(board);
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -249,7 +249,7 @@ public class Board {
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
         board.put(newCoordinates, pawn);
-        Design.healthBar(board);
+        Design.changeScore(board);
         PawnMoves pawnMoves = new PawnMoves(newCoordinates, pawn);
 
         if(pawnMoves.getPossibleKick().size() > 0) {
@@ -384,12 +384,15 @@ public class Board {
 
         if(roundWithoutKick == 12) {
             isGameEnd = true;
+            Design.generateHealthBar(12, 12);
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
+            Design.generateHealthBar(0, 12);
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
+            Design.generateHealthBar(12, 0);
             new EndGame("You win! Congratulations! :)");
         }
     }

@@ -9,9 +9,9 @@ import javafx.scene.layout.*;
 import pl.nogacz.checkers.board.Coordinates;
 import pl.nogacz.checkers.pawns.PawnClass;
 
-import javafx.geometry.Orientation;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import pl.nogacz.checkers.pawns.PawnColor;
-import javafx.scene.control.Slider;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -70,19 +70,9 @@ public class Design {
 
     public static void removePawn(Coordinates coordinates) {
        gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
-       /* 
-        ObservableList<javafx.scene.Node> childrens = gridPane.getChildren();
-        for(javafx.scene.Node node : childrens){
-            if(node != null){
-                if(GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY()) {
-                    gridPane.getChildren().remove(node);
-                    break;
-                }
-            }
-        }*/
     }
 
-    public static void healthBar(HashMap<Coordinates, PawnClass> board){
+    public static void changeScore(HashMap<Coordinates, PawnClass> board){
         int computerScore = 0;
         int playerScore = 0;
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
@@ -92,27 +82,43 @@ public class Design {
                 playerScore++;
             }
         }
-        generateSlider(playerScore, computerScore);
+        generateHealthBar(playerScore, computerScore);
     }
 
-    public static void generateSlider(int playerScore, int computerScore){
-        //EKSIKLER: slider hareket edebiliyor, iki farklı renk yok
-        //oncekini siliyor
+    public static void generateHealthBar(int playerScore, int computerScore){
+        //delete old bars
         removePawn(new Coordinates(0,8));
-        //slider ozellikleri
+        removePawn(new Coordinates(0,8));
+
+        //decide bar lengths according to the current score
         int total = computerScore+playerScore;
-        Slider slider = new Slider(0, total, playerScore);
-        slider.setOrientation(Orientation.HORIZONTAL);
-        slider.setMaxWidth(600);
-        slider.setBlockIncrement(0);
-        slider.setSnapToTicks(true);
-        slider.setMajorTickUnit(total/2);
-        slider.setMinorTickCount(0);
-        //interface'e yerlestirme
-        GridPane.setRowIndex(slider, 8);
-        GridPane.setColumnIndex(slider, 0);//to avoid error
-        GridPane.setColumnSpan(slider, 8);
-        gridPane.getChildren().add(slider);
-        GridPane.setHgrow(slider, Priority.ALWAYS);
+        int userBarLength = 680*playerScore/total;
+        int pcBarLength   = 680*computerScore/total;
+        Rectangle recUser = new Rectangle(0, 0, userBarLength, 15);
+        Rectangle recPc   = new Rectangle(0, 0, pcBarLength, 15);
+
+        //add user bar
+        recUser.setArcHeight(15);
+        recUser.setArcWidth(15);
+        recUser.setStroke(Color.BLACK);
+        recUser.setFill(Color.DARKKHAKI);
+        GridPane.setRowIndex(recUser, 8);
+        GridPane.setColumnIndex(recUser, 0);
+        GridPane.setColumnSpan(recUser, 8);
+        gridPane.getChildren().add(recUser);
+        GridPane.setHgrow(recUser, Priority.ALWAYS);
+        GridPane.setHalignment(recUser, HPos.LEFT);
+
+        //add computer bar
+        recPc.setArcHeight(15);
+        recPc.setArcWidth(15);
+        recPc.setStroke(Color.DARKKHAKI);
+        recPc.setFill(Color.BLACK);
+        GridPane.setRowIndex(recPc, 8);
+        GridPane.setColumnIndex(recPc, 0);
+        GridPane.setColumnSpan(recPc, 8);
+        gridPane.getChildren().add(recPc);
+        GridPane.setHgrow(recPc, Priority.ALWAYS);
+        GridPane.setHalignment(recPc, HPos.RIGHT);
     }
 }
