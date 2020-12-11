@@ -77,6 +77,7 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
+        Design.healthBar(board);
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -248,7 +249,7 @@ public class Board {
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
         board.put(newCoordinates, pawn);
-
+        Design.healthBar(board);
         PawnMoves pawnMoves = new PawnMoves(newCoordinates, pawn);
 
         if(pawnMoves.getPossibleKick().size() > 0) {

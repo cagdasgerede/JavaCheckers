@@ -9,6 +9,11 @@ import javafx.scene.layout.*;
 import pl.nogacz.checkers.board.Coordinates;
 import pl.nogacz.checkers.pawns.PawnClass;
 
+import javafx.geometry.Orientation;
+import pl.nogacz.checkers.pawns.PawnColor;
+import javafx.scene.control.Slider;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * @author Dawid Nogacz on 17.05.2019
  */
@@ -64,6 +69,50 @@ public class Design {
     }
 
     public static void removePawn(Coordinates coordinates) {
-        gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
+       gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
+       /* 
+        ObservableList<javafx.scene.Node> childrens = gridPane.getChildren();
+        for(javafx.scene.Node node : childrens){
+            if(node != null){
+                if(GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY()) {
+                    gridPane.getChildren().remove(node);
+                    break;
+                }
+            }
+        }*/
+    }
+
+    public static void healthBar(HashMap<Coordinates, PawnClass> board){
+        int computerScore = 0;
+        int playerScore = 0;
+        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+            if(entry.getValue().getColor() == PawnColor.BLACK){
+                computerScore++;
+            }else if(entry.getValue().getColor() == PawnColor.WHITE){
+                playerScore++;
+            }
+        }
+        generateSlider(playerScore, computerScore);
+    }
+
+    public static void generateSlider(int playerScore, int computerScore){
+        //EKSIKLER: slider hareket edebiliyor, iki farklı renk yok
+        //oncekini siliyor
+        removePawn(new Coordinates(0,8));
+        //slider ozellikleri
+        int total = computerScore+playerScore;
+        Slider slider = new Slider(0, total, playerScore);
+        slider.setOrientation(Orientation.HORIZONTAL);
+        slider.setMaxWidth(600);
+        slider.setBlockIncrement(0);
+        slider.setSnapToTicks(true);
+        slider.setMajorTickUnit(total/2);
+        slider.setMinorTickCount(0);
+        //interface'e yerlestirme
+        GridPane.setRowIndex(slider, 8);
+        GridPane.setColumnIndex(slider, 0);//to avoid error
+        GridPane.setColumnSpan(slider, 8);
+        gridPane.getChildren().add(slider);
+        GridPane.setHgrow(slider, Priority.ALWAYS);
     }
 }
