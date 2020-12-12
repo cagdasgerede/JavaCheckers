@@ -40,6 +40,7 @@ public class Board{
     private boolean isSelected = false;
     private boolean newKick = false;
     private Coordinates selectedCoordinates;
+    private Coordinates addPawnCoordinates;
     public boolean isEditMenuActive = false;
 
     private Set<Coordinates> possibleMoves = new HashSet<>();
@@ -149,7 +150,8 @@ public class Board{
         }else{
             Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
           if(isSelected) {
-                if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()) {
+                if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()
+                || (eventCoordinates.getX() == addPawnCoordinates.getX() && eventCoordinates.getY() ==  selectedCoordinates.getY())){
                     if(isFieldNotNull(eventCoordinates)) {
                         unLightSelect(selectedCoordinates);
                     }
@@ -164,12 +166,14 @@ public class Board{
                         possibleReplaces.clear();
                         lightReplace(eventCoordinates);
                         possibleReplaces.add(eventCoordinates);
+                        addPawnCoordinates = eventCoordinates;
                     }
                 }
             }
             else if (!isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()){
                 isSelected = true;
-                selectedCoordinates = eventCoordinates;
+                addPawnCoordinates = eventCoordinates;
+                 selectedCoordinates = eventCoordinates;
                 possibleReplaces.add(eventCoordinates);
                 lightReplace(eventCoordinates);
             }
@@ -178,6 +182,7 @@ public class Board{
                 if (isFieldNotNull(eventCoordinates)) {
                     isSelected = true;
                     selectedCoordinates = eventCoordinates;
+                    addPawnCoordinates = eventCoordinates;
                     editLightSelect(eventCoordinates);
                 }
             }
@@ -222,7 +227,6 @@ public class Board{
             public void handle(WorkerStateEvent event) {
                 Coordinates moveCoordinates = computer.chooseMove(selectedCoordinates);
                 unLightSelect(selectedCoordinates);
-
                 if(computer.isKickedMove()) {
                     if(!kickPawn(selectedCoordinates, moveCoordinates)) {
                         newKick = false;
@@ -587,22 +591,22 @@ public class Board{
             if(command.equals("White")){
                 Platform.runLater(() -> {
                     PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.WHITE);
-                    board.put(selectedCoordinates,pawn);
-                    Design.addPawn(selectedCoordinates,pawn);
+                    board.put(addPawnCoordinates,pawn);
+                    Design.addPawn(addPawnCoordinates,pawn);
                     possibleReplaces.forEach(Board.this::unLightReplace);
                     possibleReplaces.clear();
-                    selectedCoordinates = null;
+                    addPawnCoordinates = null;
                     isSelected = false;
                 });
             }
             if(command.equals("Black")){
                 Platform.runLater(() -> {
                     PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.BLACK);
-                    board.put(selectedCoordinates,pawn);
-                    Design.addPawn(selectedCoordinates,pawn);
+                    board.put(addPawnCoordinates,pawn);
+                    Design.addPawn(addPawnCoordinates,pawn);
                     possibleReplaces.forEach(Board.this::unLightReplace);
                     possibleReplaces.clear();
-                    selectedCoordinates = null;
+                    addPawnCoordinates = null;
                     isSelected = false;
                 });
             }
