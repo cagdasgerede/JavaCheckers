@@ -147,13 +147,15 @@ public class Board{
                 editMenu = null;
             }
         }else{
-            if(!possibleReplaces.isEmpty()){
-                possibleReplaces.forEach(this::unLightReplace);
-            }
             Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
           if(isSelected) {
                 if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()) {
+                    if(isFieldNotNull(eventCoordinates)) {
                         unLightSelect(selectedCoordinates);
+                    }
+                    else{
+                        unLightReplace(eventCoordinates);
+                    }
                          isSelected = false;
                 }
                 else if(!isFieldNotNull(eventCoordinates)){
@@ -165,7 +167,13 @@ public class Board{
                     }
                 }
             }
-            else if(eventCoordinates.isValid()) {
+            else if (!isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()){
+                isSelected = true;
+                selectedCoordinates = eventCoordinates;
+                possibleReplaces.add(eventCoordinates);
+                lightReplace(eventCoordinates);
+            }
+            else if(isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()) {
                 possibleReplaces.forEach(this::unLightReplace);
                 if (isFieldNotNull(eventCoordinates)) {
                     isSelected = true;
@@ -173,6 +181,8 @@ public class Board{
                     editLightSelect(eventCoordinates);
                 }
             }
+
+
         }
 
     }
@@ -225,7 +235,6 @@ public class Board{
                     }
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
-
                     isComputerRound = false;
                     selectedCoordinates = null;
                 }
@@ -349,22 +358,16 @@ public class Board{
         possibleMoves = pawnMoves.getPossibleMoves();
         possibleKick = pawnMoves.getPossibleKick();
         possiblePromote = pawnMoves.getPossiblePromote();
-
         if(possibleKick.size() > 0) {
             possibleMoves.clear();
         }
-
         possibleMoves.forEach(this::lightMove);
         possibleKick.forEach(this::lightKick);
-
         lightPawn(coordinates);
     }
-
     private void editLightSelect(Coordinates coordinates) {
         editLightPawn(coordinates);
     }
-
-
 
     private void lightNewKick(Coordinates coordinates) {
         PawnMoves pawnMoves = new PawnMoves(coordinates, getPawn(coordinates));
@@ -485,9 +488,11 @@ public class Board{
     class EditMenu extends JFrame implements  ActionListener {
 
         public static final int WIDTH = 350;
-        public static final int HEIGHT = 350;
-        private JButton removeButton = new JButton("Remove Selected Pawn");
-        private JButton replaceButton = new JButton("Replace Selected Pawn");
+        public static final int HEIGHT = 550;
+        private JButton removeButton = new JButton("Remove");
+        private JButton replaceButton = new JButton("Replace");
+        private JButton addWhitePawnButton = new JButton("White");
+        private JButton addBlackPawnButton = new JButton("Black");
         private JButton exitButton = new JButton("Ready");
         public EditMenu() {
             super(" Customize the game");
@@ -497,6 +502,8 @@ public class Board{
             setButtons();
             this.add(removeButton);
             this.add(replaceButton);
+            this.add(addWhitePawnButton);
+            this.add(addBlackPawnButton);
             this.add(exitButton);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             this.addWindowListener(new WindowAdapter() {
@@ -526,9 +533,23 @@ public class Board{
             exitButton.setBorder(BorderFactory.createEmptyBorder());
             exitButton.setContentAreaFilled(false);
             exitButton.setFocusable(false);
-            removeButton.setBounds(15, 50, 305, 57);
-            replaceButton.setBounds(15, 120, 305, 57);
-            exitButton.setBounds(15, 190, 305, 57);
+            String addWhiteButtonPNG = this.getClass().getClassLoader().getResource("button_add-white-pawn.png").getFile();
+            addWhitePawnButton.setIcon(new ImageIcon(addWhiteButtonPNG));
+            addWhitePawnButton.setBorder(BorderFactory.createEmptyBorder());
+            addWhitePawnButton.setContentAreaFilled(false);
+            addWhitePawnButton.setFocusable(false);
+            String addBlackButtonPNG = this.getClass().getClassLoader().getResource("button_add-black-pawn.png").getFile();
+            addBlackPawnButton.setIcon(new ImageIcon(addBlackButtonPNG));
+            addBlackPawnButton.setBorder(BorderFactory.createEmptyBorder());
+            addBlackPawnButton.setContentAreaFilled(false);
+            addBlackPawnButton.setFocusable(false);
+            removeButton.setBounds(20, 20, 300, 60);
+            replaceButton.setBounds(20, 100, 300, 60);
+            addWhitePawnButton.setBounds(20,180,300,60);
+            addBlackPawnButton.setBounds(20,260,300,60);
+            exitButton.setBounds(20, 360, 310, 60);
+            addWhitePawnButton.addActionListener(this);
+            addBlackPawnButton.addActionListener(this);
             removeButton.addActionListener(this);
             replaceButton.addActionListener(this);
             exitButton.addActionListener(this);
@@ -541,7 +562,7 @@ public class Board{
                 isEditMenuActive = false;
                 this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             }
-            if (command.equals("Remove Selected Pawn")) {
+            if (command.equals("Remove")) {
                 Platform.runLater(() -> {
                     board.remove(selectedCoordinates);
                     Design.removePawn(selectedCoordinates);
@@ -551,7 +572,7 @@ public class Board{
                     selectedCoordinates = null;
                 });
             }
-            if(command.equals("Replace Selected Pawn")){
+            if(command.equals("Replace")){
                 Platform.runLater(() -> {
                             if(!possibleReplaces.isEmpty()){
                                 Coordinates newCoordinate = possibleReplaces.iterator().next();
@@ -561,6 +582,28 @@ public class Board{
                                 selectedCoordinates = null;
                                 isSelected = false;
                             }
+                });
+            }
+            if(command.equals("White")){
+                Platform.runLater(() -> {
+                    PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.WHITE);
+                    board.put(selectedCoordinates,pawn);
+                    Design.addPawn(selectedCoordinates,pawn);
+                    possibleReplaces.forEach(Board.this::unLightReplace);
+                    possibleReplaces.clear();
+                    selectedCoordinates = null;
+                    isSelected = false;
+                });
+            }
+            if(command.equals("Black")){
+                Platform.runLater(() -> {
+                    PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.BLACK);
+                    board.put(selectedCoordinates,pawn);
+                    Design.addPawn(selectedCoordinates,pawn);
+                    possibleReplaces.forEach(Board.this::unLightReplace);
+                    possibleReplaces.clear();
+                    selectedCoordinates = null;
+                    isSelected = false;
                 });
             }
         }
