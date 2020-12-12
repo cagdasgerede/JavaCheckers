@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.nogacz.checkers.application.Design;
+import pl.nogacz.checkers.application.StartMenu;
 import pl.nogacz.checkers.board.Board;
 
 /**
@@ -13,7 +14,6 @@ import pl.nogacz.checkers.board.Board;
 public class Checkers extends Application {
     Design design = new Design();
     Board board = new Board();
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -26,7 +26,8 @@ public class Checkers extends Application {
 
         primaryStage.setTitle("JavaCheckers");
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(false); 
         primaryStage.show();
+        StartMenu startMenu = new StartMenu(board);       
     }
 }

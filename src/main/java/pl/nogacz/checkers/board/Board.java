@@ -6,11 +6,13 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import jdk.javadoc.internal.tool.Start;
 import javafx.application.Platform;
 
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
+import pl.nogacz.checkers.application.StartMenu;
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
@@ -44,7 +46,7 @@ public class Board {
 
     private boolean isGameEnd = false;
     private int roundWithoutKick = 0;
-    private boolean isMenuActive=false;
+    public boolean isMenuActive=false;
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
@@ -86,6 +88,7 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
+        
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -426,7 +429,7 @@ public class Board {
      class Menu extends JFrame implements ActionListener{
         public static final int WIDTH = 500;
         public static final int HEIGHT = 500;
-        private JButton Resume_button = new JButton();
+        private JButton Resume_button = new JButton("Resume");
         private JButton NewGame_button = new JButton("New Game");
         private JButton Exit_button = new JButton("EXIT");
     
@@ -434,16 +437,16 @@ public class Board {
             //Initialize
             super("Game Menu");
             setSize(WIDTH,HEIGHT);
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // dont need that but maybe someone want to remove undecorated
             this.setUndecorated(true);
-            this.setBackground(Color.BLACK);
+            this.setBackground(new Color(0, 0, 0,100));
             this.add(Resume_button);
             this.add(NewGame_button);
             this.add(Exit_button);
             //Set Bounds
             String resume_path = this.getClass().getClassLoader().getResource("resume.png").getFile();
             Resume_button.setIcon(new ImageIcon(resume_path));
-            Resume_button.setBounds(10, 50, 340, 100);
+            Resume_button.setBounds(80, 50, 340, 100);
             NewGame_button.setBounds(200, 200, 100, 100);
             Exit_button.setBounds(200, 350, 100, 100);
             //Give them Func
@@ -465,7 +468,9 @@ public class Board {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             String command = actionEvent.getActionCommand();
+            System.out.println("hey");
             if(command.equals("Resume")) {
+                System.out.println("pressed");
                     isMenuActive=false;
                     this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
             }else if(command.equals("New Game")) {
@@ -477,8 +482,6 @@ public class Board {
     
         public void restart()
         {
-            System.out.println("asdasdasdasd");
-
             Platform.runLater(() -> { 
                 for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
                     Design.removePawn(entry.getKey());
