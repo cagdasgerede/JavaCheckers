@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
 /**
  * @author Dawid Nogacz on 17.05.2019
  */
-public class Checkers extends Application implements EventHandler<ActionEvent> {
+public class Checkers extends Application {
     Design design = new Design();
     Board board = new Board();
 
@@ -44,8 +44,4 @@ public class Checkers extends Application implements EventHandler<ActionEvent> {
         return scene;
     }
 
-    @Override
-    public void handle(ActionEvent event) {
-       board.isEditMenuActive = !board.isEditMenuActive;
-    }
 }

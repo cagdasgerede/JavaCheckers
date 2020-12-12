@@ -493,7 +493,7 @@ public class Board{
             super(" Customize the game");
             setSize(WIDTH, HEIGHT);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            this.setContentPane(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("edit-menu-background.jpg").getFile())));
+            this.setContentPane(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("edit-menu-background.png").getFile())));
             setButtons();
             this.add(removeButton);
             this.add(replaceButton);
@@ -526,9 +526,9 @@ public class Board{
             exitButton.setBorder(BorderFactory.createEmptyBorder());
             exitButton.setContentAreaFilled(false);
             exitButton.setFocusable(false);
-            removeButton.setBounds(10, 50, 300, 57);
-            replaceButton.setBounds(10, 120, 300, 57);
-            exitButton.setBounds(10, 190, 300, 57);
+            removeButton.setBounds(15, 50, 305, 57);
+            replaceButton.setBounds(15, 120, 305, 57);
+            exitButton.setBounds(15, 190, 305, 57);
             removeButton.addActionListener(this);
             replaceButton.addActionListener(this);
             exitButton.addActionListener(this);
