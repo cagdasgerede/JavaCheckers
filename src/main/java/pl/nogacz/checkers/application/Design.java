@@ -15,6 +15,8 @@ import pl.nogacz.checkers.pawns.PawnClass;
 public class Design {
     private static GridPane gridPane = new GridPane();
     private static Image lightMove = new Image(Resources.getPath("light.png"));
+    private static Image lightReplace = new Image(Resources.getPath("replacelight.png"));
+
 
     public Design() {
         createBoardBackground();
@@ -24,6 +26,8 @@ public class Design {
     public static GridPane getGridPane() {
         return gridPane;
     }
+
+
 
     private void createBoardBackground() {
         Image background = new Image(Resources.getPath("board.png"));
@@ -58,9 +62,17 @@ public class Design {
     public static void addLightPawn(Coordinates coordinates, PawnClass pawn) {
         gridPane.add(pawn.getLightImage(), coordinates.getX(), coordinates.getY());
     }
+    public static void addEditLightPawn(Coordinates coordinates, PawnClass pawn) {
+        gridPane.add(pawn.getEditLightImage(),coordinates.getX(),coordinates.getY());
+    }
+
 
     public static void addLightMove(Coordinates coordinates) {
         gridPane.add(new ImageView(lightMove), coordinates.getX(), coordinates.getY());
+    }
+
+    public static void addLightReplace(Coordinates coordinates) {
+        gridPane.add(new ImageView(lightReplace), coordinates.getX(), coordinates.getY());
     }
 
     public static void removePawn(Coordinates coordinates) {

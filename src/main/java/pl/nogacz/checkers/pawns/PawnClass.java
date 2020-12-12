@@ -1,5 +1,6 @@
 package pl.nogacz.checkers.pawns;
 
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import pl.nogacz.checkers.application.Resources;
@@ -33,4 +34,11 @@ public class PawnClass {
         Image image = new Image(Resources.getPath("pawns/light_" + color + "_" + pawn + ".png"));
         return new ImageView(image);
     }
+    public ImageView getEditLightImage(){
+        Image image = new Image(Resources.getPath("pawns/edit" + color + ".jpg"));
+        return new ImageView(image);
+    }
+
+
+
 }
