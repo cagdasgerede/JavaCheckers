@@ -444,11 +444,15 @@ public class Board {
             this.add(NewGame_button);
             this.add(Exit_button);
             //Set Bounds
-            String resume_path = this.getClass().getClassLoader().getResource("resume.png").getFile();
+            String exit_path = this.getClass().getClassLoader().getResource("button_exit.png").getFile();
+            String resume_path = this.getClass().getClassLoader().getResource("button_resume.png").getFile();
+            String new_game_path = this.getClass().getClassLoader().getResource("button_new-game.png").getFile();
+            Exit_button.setIcon(new ImageIcon(exit_path));
             Resume_button.setIcon(new ImageIcon(resume_path));
-            Resume_button.setBounds(80, 50, 340, 100);
-            NewGame_button.setBounds(200, 200, 100, 100);
-            Exit_button.setBounds(200, 350, 100, 100);
+            NewGame_button.setIcon(new ImageIcon(new_game_path));
+            Resume_button.setBounds(150, 50, 225, 80);
+            NewGame_button.setBounds(150, 200, 280, 80);
+            Exit_button.setBounds(150, 350, 150, 80);
             //Give them Func
             Resume_button.addActionListener(this);
             NewGame_button.addActionListener(this);

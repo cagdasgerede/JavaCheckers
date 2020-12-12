@@ -30,12 +30,15 @@ public class StartMenu extends JFrame implements ActionListener{
         this.add(Start_button);
         this.add(Exit_button);
         //Set Bounds
-        Start_button.setBounds(200, 50, 100, 100);
-        Exit_button.setBounds(200, 350, 100, 100);
+        String start_path = this.getClass().getClassLoader().getResource("button_start.png").getFile();
+        String exit_path = this.getClass().getClassLoader().getResource("button_exit.png").getFile();
+        Start_button.setIcon(new ImageIcon(start_path));
+        Exit_button.setIcon(new ImageIcon(exit_path));
+        Start_button.setBounds(150, 125, 165, 80);
+        Exit_button.setBounds(150, 300, 150, 80);
         //Give them Func
         Start_button.addActionListener(this);
         Exit_button.addActionListener(this);
-
         setLocationRelativeTo(null);
         setLayout(null);
         setVisible(true);
