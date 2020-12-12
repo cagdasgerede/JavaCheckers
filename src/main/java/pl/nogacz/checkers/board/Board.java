@@ -6,14 +6,22 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.application.Platform;
+
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
-import pl.nogacz.checkers.application.Menu;
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +44,7 @@ public class Board {
 
     private boolean isGameEnd = false;
     private int roundWithoutKick = 0;
-
+    private boolean isMenuActive=false;
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
@@ -81,6 +89,9 @@ public class Board {
     }
 
     public void readMouseEvent(MouseEvent event) {
+        if(isMenuActive) {
+            return;
+        }
         if(isComputerRound) {
             return;
         }
@@ -138,13 +149,16 @@ public class Board {
             EndGame.restartApplication();
         }
         if(event.getCode().equals(KeyCode.ESCAPE)) {
-            Menu menu = new Menu();
+            isMenuActive = true;
+            Menu menu = new Menu(this);
         }
     }
 
     private void computerMove() {
         checkGameEnd();
-
+        if(isMenuActive) {
+            return;
+        }
         if(isGameEnd) {
             return;
         }
@@ -407,5 +421,106 @@ public class Board {
 
     public static PawnClass getPawn(Coordinates coordinates) {
         return board.get(coordinates);
+    }
+
+     class Menu extends JFrame implements ActionListener{
+        public static final int WIDTH = 500;
+        public static final int HEIGHT = 500;
+        private JButton Resume_button = new JButton();
+        private JButton NewGame_button = new JButton("New Game");
+        private JButton Exit_button = new JButton("EXIT");
+    
+        public Menu(Board board) {
+            //Initialize
+            super("Game Menu");
+            setSize(WIDTH,HEIGHT);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            this.setUndecorated(true);
+            this.setBackground(Color.BLACK);
+            this.add(Resume_button);
+            this.add(NewGame_button);
+            this.add(Exit_button);
+            //Set Bounds
+            String resume_path = this.getClass().getClassLoader().getResource("resume.png").getFile();
+            Resume_button.setIcon(new ImageIcon(resume_path));
+            Resume_button.setBounds(10, 50, 340, 100);
+            NewGame_button.setBounds(200, 200, 100, 100);
+            Exit_button.setBounds(200, 350, 100, 100);
+            //Give them Func
+            Resume_button.addActionListener(this);
+            NewGame_button.addActionListener(this);
+            Exit_button.addActionListener(this);
+    
+            setLocationRelativeTo(null);
+            setLayout(null);
+            setVisible(true);
+    
+            this.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    isMenuActive=false;
+                }
+            });
+        }
+    
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String command = actionEvent.getActionCommand();
+            if(command.equals("Resume")) {
+                    isMenuActive=false;
+                    this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
+            }else if(command.equals("New Game")) {
+                restart();
+            }else if(command.equals("EXIT")){
+                System.exit(0);
+            }
+        }
+    
+        public void restart()
+        {
+            System.out.println("asdasdasdasd");
+
+            Platform.runLater(() -> { 
+                for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                    Design.removePawn(entry.getKey());
+                 }  
+            board.clear(); 
+
+            board.put(new Coordinates(1, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(3, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(5, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(7, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(0, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(2, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(4, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(6, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(1, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(3, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(5, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            board.put(new Coordinates(7, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+    
+            board.put(new Coordinates(0, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(2, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(4, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(6, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(1, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(3, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(5, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(7, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(0, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(2, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(4, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            board.put(new Coordinates(6, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+    
+            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                Design.addPawn(entry.getKey(), entry.getValue());
+            } 
+
+            });
+
+           
+            
+           
+        }
+    
     }
 }
