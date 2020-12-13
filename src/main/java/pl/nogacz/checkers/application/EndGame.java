@@ -3,6 +3,7 @@ package pl.nogacz.checkers.application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import pl.nogacz.checkers.Checkers;
+import pl.nogacz.checkers.audio.AudioPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.Optional;
  * @author Dawid Nogacz on 25.05.2019
  */
 public class EndGame {
+    AudioPlayer audioPlayer = new AudioPlayer();
+
     public EndGame(String message) {
         printDialog(message);
     }
@@ -21,6 +24,8 @@ public class EndGame {
         alert.setTitle("JavaChess");
         alert.setContentText(message);
 
+        audioPlayer.playSoundEffect("menu.wav");
+        
         ButtonType newGameButton = new ButtonType("New game");
         ButtonType exitButton = new ButtonType("Exit");
 

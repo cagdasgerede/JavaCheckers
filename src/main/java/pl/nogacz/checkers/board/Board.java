@@ -14,6 +14,8 @@ import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
 
+import pl.nogacz.checkers.audio.AudioPlayer;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +26,8 @@ import java.util.Set;
  */
 public class Board {
     private static HashMap<Coordinates, PawnClass> board = new HashMap<>();
+
+    AudioPlayer audioPlayer = new AudioPlayer();
 
     private boolean isSelected = false;
     private boolean newKick = false;
@@ -120,7 +124,7 @@ public class Board {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
                 }
-                //pieceWon sesi eklenecek
+                audioPlayer.playSoundEffect("pieceWon.wav");
             }
         } else if(eventCoordinates.isValid()) {
             if(isFieldNotNull(eventCoordinates)) {
@@ -134,7 +138,6 @@ public class Board {
     }
 
     public void readKeyboard(KeyEvent event) {
-        //menu sesi eklenecek
         if(event.getCode().equals(KeyCode.R) || event.getCode().equals(KeyCode.N)) {
             EndGame.restartApplication();
         }
@@ -176,7 +179,7 @@ public class Board {
                         selectedCoordinates = moveCoordinates;
                         computerMove();
                     }
-                    //pieceLost sesi eklenecek
+                    audioPlayer.playSoundEffect("pieceLost.wav");
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
 
@@ -389,11 +392,11 @@ public class Board {
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
-            //Kaybetme sesi eklenecek
+            audioPlayer.playSoundEffect("gameLost.wav");
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
-            //Kazanma sesi eklenecek
+            audioPlayer.playSoundEffect("gameWon.wav");
             new EndGame("You win! Congratulations! :)");
         }
     }
