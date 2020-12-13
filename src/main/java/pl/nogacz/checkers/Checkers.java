@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.nogacz.checkers.application.Design;
+import pl.nogacz.checkers.audio.AudioPlayer;
 import pl.nogacz.checkers.board.Board;
 
 /**
@@ -13,6 +14,7 @@ import pl.nogacz.checkers.board.Board;
 public class Checkers extends Application {
     Design design = new Design();
     Board board = new Board();
+    AudioPlayer audioPlayer = new AudioPlayer();
 
     public static void main(String[] args) {
         launch(args);
@@ -20,7 +22,9 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(design.getGridPane(), 750, 750, Color.BLACK);
+        Scene scene = new Scene(Design.getGridPane(), 750, 750, Color.BLACK);
+        audioPlayer.playBackgroundMusic("gameStart.wav");
+        audioPlayer.playBackgroundMusic("background2.wav");
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
 

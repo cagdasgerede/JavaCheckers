@@ -120,6 +120,7 @@ public class Board {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
                 }
+                //pieceWon sesi eklenecek
             }
         } else if(eventCoordinates.isValid()) {
             if(isFieldNotNull(eventCoordinates)) {
@@ -133,6 +134,7 @@ public class Board {
     }
 
     public void readKeyboard(KeyEvent event) {
+        //menu sesi eklenecek
         if(event.getCode().equals(KeyCode.R) || event.getCode().equals(KeyCode.N)) {
             EndGame.restartApplication();
         }
@@ -174,6 +176,7 @@ public class Board {
                         selectedCoordinates = moveCoordinates;
                         computerMove();
                     }
+                    //pieceLost sesi eklenecek
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
 
@@ -386,9 +389,11 @@ public class Board {
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
+            //Kaybetme sesi eklenecek
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
+            //Kazanma sesi eklenecek
             new EndGame("You win! Congratulations! :)");
         }
     }
