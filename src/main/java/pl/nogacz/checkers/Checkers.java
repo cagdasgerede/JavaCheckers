@@ -21,7 +21,12 @@ public class Checkers extends Application {
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(design.getGridPane(), 750, 750, Color.BLACK);
+        
+        if(board.getisBlackRound())
+        scene.setOnMouseClicked(event -> board.readMouseEventBlack(event));
+        else
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
+       
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
 
         primaryStage.setTitle("JavaCheckers");

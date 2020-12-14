@@ -37,6 +37,7 @@ public class Board {
     private int roundWithoutKick = 0;
 
     private boolean isComputerRound = false;
+    private boolean isBlackRound = false;
     private Computer computer = new Computer();
 
     public Board() {
@@ -78,11 +79,74 @@ public class Board {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
     }
+    public  boolean getisBlackRound(){
+        if(isBlackRound)
+        return true;
+        else 
+        return false;
+    }
 
     public void readMouseEvent(MouseEvent event) {
-        if(isComputerRound) {
+        System.out.println("sira beyaz");
+       if(isBlackRound){
+        readMouseEventBlack(event);
+        return;
+    }
+        checkGameEnd();
+
+        if(isGameEnd) {
             return;
         }
+
+        Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+        
+        if(isSelected) {
+            if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+                unLightSelect(selectedCoordinates);
+
+                selectedCoordinates = null;
+                isSelected = false;
+            } else if(possibleMoves.contains(eventCoordinates)) {
+                roundWithoutKick++;
+
+                unLightSelect(selectedCoordinates);
+                movePawn(selectedCoordinates, eventCoordinates);
+                selectedCoordinates = null;
+                isSelected = false;
+                isBlackRound=true;
+                
+                //computerMove();
+                
+            } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                roundWithoutKick = 0;
+
+                unLightSelect(selectedCoordinates);
+
+                if(!kickPawn(selectedCoordinates, eventCoordinates)) {
+                    isSelected = false;
+                    newKick = false;
+                    isBlackRound=true;
+                    
+                //    computerMove();
+                
+                } else {
+                    newKick = true;
+                    selectedCoordinates = eventCoordinates;
+                }
+            }
+        } else if(eventCoordinates.isValid()) {
+            if(isFieldNotNull(eventCoordinates)) {
+                if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
+                    isSelected = true;
+                    selectedCoordinates = eventCoordinates;
+                    lightSelect(eventCoordinates);
+                }
+            }
+        }
+        System.out.println(isBlackRound+" yukari");
+    }
+    public void readMouseEventBlack(MouseEvent event) {
+        
 
         checkGameEnd();
 
@@ -106,7 +170,8 @@ public class Board {
                 selectedCoordinates = null;
                 isSelected = false;
 
-                computerMove();
+             //   computerMove();
+             isBlackRound =false;
             } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                 roundWithoutKick = 0;
 
@@ -115,7 +180,8 @@ public class Board {
                 if(!kickPawn(selectedCoordinates, eventCoordinates)) {
                     isSelected = false;
                     newKick = false;
-                    computerMove();
+               //     computerMove();
+               isBlackRound =false;
                 } else {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
@@ -123,13 +189,14 @@ public class Board {
             }
         } else if(eventCoordinates.isValid()) {
             if(isFieldNotNull(eventCoordinates)) {
-                if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
+                if(getPawn(eventCoordinates).getColor().isBlack() && isPossiblePawn(eventCoordinates, PawnColor.BLACK)) {
                     isSelected = true;
                     selectedCoordinates = eventCoordinates;
                     lightSelect(eventCoordinates);
                 }
             }
         }
+        System.out.println(isBlackRound+" assa");
     }
 
     public void readKeyboard(KeyEvent event) {
