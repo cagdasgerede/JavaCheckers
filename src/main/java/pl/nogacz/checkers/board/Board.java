@@ -14,18 +14,11 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -111,7 +104,6 @@ public class Board{
             if(isSelected) {
                 if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
                     unLightSelect(selectedCoordinates);
-
                     selectedCoordinates = null;
                     isSelected = false;
                 } else if(possibleMoves.contains(eventCoordinates)) {
@@ -149,11 +141,11 @@ public class Board{
             }
         }else{
             Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
-          if(isSelected) {
+            if(isSelected) {
                 if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()
                 || (eventCoordinates.getX() == addPawnCoordinates.getX() && eventCoordinates.getY() ==  selectedCoordinates.getY())){
                     if(isFieldNotNull(eventCoordinates)) {
-                        unLightSelect(selectedCoordinates);
+                        unLightEditSelect(selectedCoordinates);
                     }
                     else{
                         unLightReplace(eventCoordinates);
@@ -179,17 +171,12 @@ public class Board{
             }
             else if(isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()) {
                 possibleReplaces.forEach(this::unLightReplace);
-                if (isFieldNotNull(eventCoordinates)) {
-                    isSelected = true;
-                    selectedCoordinates = eventCoordinates;
-                    addPawnCoordinates = eventCoordinates;
-                    editLightSelect(eventCoordinates);
-                }
+                isSelected = true;
+                selectedCoordinates = eventCoordinates;
+                addPawnCoordinates = eventCoordinates;
+                editLightSelect(eventCoordinates);
             }
-
-
         }
-
     }
     public void readKeyboard(KeyEvent event) {
             if(event.getCode().equals(KeyCode.R)){
@@ -242,8 +229,6 @@ public class Board{
                     isComputerRound = false;
                     selectedCoordinates = null;
                 }
-
-
             }
         });
 
@@ -416,6 +401,9 @@ public class Board{
         possibleMoves.forEach(this::unLightMove);
         possibleKick.forEach(this::unLightKick);
 
+        unLightPawn(coordinates);
+    }
+    private void unLightEditSelect(Coordinates coordinates) {
         unLightPawn(coordinates);
     }
 
@@ -611,8 +599,6 @@ public class Board{
                 });
             }
         }
-
-
     }
 
 }
