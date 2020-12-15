@@ -1,24 +1,26 @@
 package pl.nogacz.checkers.board;
 
+import jdk.javadoc.internal.tool.Start;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import jdk.javadoc.internal.tool.Start;
 import javafx.application.Platform;
 
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
 import pl.nogacz.checkers.application.StartMenu;
+
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +48,7 @@ public class Board {
 
     private boolean isGameEnd = false;
     private int roundWithoutKick = 0;
-    public boolean isMenuActive=false;
+    private boolean isMenuActive = false;
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
@@ -88,7 +90,6 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
-        
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -426,108 +427,100 @@ public class Board {
         return board.get(coordinates);
     }
 
+    public void setMenuActive(boolean menuActive) {
+        isMenuActive = menuActive;
+    }
+
+    public boolean isMenuActive() {
+        return isMenuActive;
+    }
+    public ImageIcon getImageIconForFileName(String name) {
+        String fileString = this.getClass().getClassLoader().getResource(name).getFile();
+        return new ImageIcon(fileString);
+    }
      class Menu extends JFrame implements ActionListener{
         public static final int WIDTH = 500;
         public static final int HEIGHT = 500;
-        private JButton Resume_button = new JButton("Resume");
-        private JButton NewGame_button = new JButton("New Game");
-        private JButton Exit_button = new JButton("EXIT");
-    
+        private JButton resumeButton = new JButton(Commands.Resume.name());
+        private JButton newGameButton = new JButton(Commands.NewGame.name());
+        private JButton exitButton = new JButton(Commands.EXIT.name());
         public Menu(Board board) {
-            //Initialize
             super("Game Menu");
-            setSize(WIDTH,HEIGHT);
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // dont need that but maybe someone want to remove undecorated
+            setSize(WIDTH, HEIGHT);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             this.setUndecorated(true);
-            this.setBackground(new Color(0, 0, 0,100));
-            this.add(Resume_button);
-            this.add(NewGame_button);
-            this.add(Exit_button);
-            //Set Bounds
-            String exit_path = this.getClass().getClassLoader().getResource("button_exit.png").getFile();
-            String resume_path = this.getClass().getClassLoader().getResource("button_resume.png").getFile();
-            String new_game_path = this.getClass().getClassLoader().getResource("button_new-game.png").getFile();
-            Exit_button.setIcon(new ImageIcon(exit_path));
-            Resume_button.setIcon(new ImageIcon(resume_path));
-            NewGame_button.setIcon(new ImageIcon(new_game_path));
-            Resume_button.setBounds(150, 50, 225, 80);
-            NewGame_button.setBounds(150, 200, 280, 80);
-            Exit_button.setBounds(150, 350, 150, 80);
-            //Give them Func
-            Resume_button.addActionListener(this);
-            NewGame_button.addActionListener(this);
-            Exit_button.addActionListener(this);
-    
+            this.setBackground(new Color(0, 0, 0,100));//transparent black
+            this.add(resumeButton);
+            this.add(newGameButton);
+            this.add(exitButton);
+            exitButton.setIcon(getImageIconForFileName("button_exit.png"));
+            resumeButton.setIcon(getImageIconForFileName("button_resume.png"));
+            newGameButton.setIcon(getImageIconForFileName("button_new-game.png"));
+            resumeButton.setBounds(150, 50, 225, 80);
+            newGameButton.setBounds(150, 200, 280, 80);
+            exitButton.setBounds(150, 350, 150, 80);
+            resumeButton.addActionListener(this);
+            newGameButton.addActionListener(this);
+            exitButton.addActionListener(this);
             setLocationRelativeTo(null);
             setLayout(null);
             setVisible(true);
-    
             this.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     isMenuActive=false;
                 }
             });
         }
-    
+
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             String command = actionEvent.getActionCommand();
-            System.out.println("hey");
-            if(command.equals("Resume")) {
-                System.out.println("pressed");
-                    isMenuActive=false;
-                    this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
-            }else if(command.equals("New Game")) {
+            if(command.equalsIgnoreCase(Commands.Resume.name())) {
+                isMenuActive=false;
+                this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
+            }else if(command.equalsIgnoreCase(Commands.NewGame.name())) {
                 restart();
-            }else if(command.equals("EXIT")){
+            }else if(command.equalsIgnoreCase(Commands.EXIT.name())){
                 System.exit(0);
             }
         }
-    
+
         public void restart()
         {
-            Platform.runLater(() -> { 
+            Platform.runLater(() -> {
                 for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
                     Design.removePawn(entry.getKey());
-                 }  
-            board.clear(); 
-
-            board.put(new Coordinates(1, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(3, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(5, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(7, 0), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(0, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(2, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(4, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(6, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(1, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(3, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(5, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            board.put(new Coordinates(7, 2), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-    
-            board.put(new Coordinates(0, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(2, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(4, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(6, 5), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(1, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(3, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(5, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(7, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(0, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(2, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(4, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            board.put(new Coordinates(6, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-    
-            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-                Design.addPawn(entry.getKey(), entry.getValue());
-            } 
-
+                 }
+                board.clear();
+                for (int i = 1; i <= 7; i+=2) {
+                    for (int j = 0; j <= 2; j+=2) {
+                        board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+                    }
+                }
+                for (int i = 0; i <= 6; i+=2) {
+                    board.put(new Coordinates(i, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+                }
+                for (int i = 0; i <= 6; i+=2) {
+                    for (int j = 5; j <=7; j+=2) {
+                        board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+                    }
+                }
+                for (int i = 1; i <= 7; i+=2) {
+                    board.put(new Coordinates(i, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+                }
+                for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                    Design.addPawn(entry.getKey(), entry.getValue());
+                }
             });
-
-           
-            
-           
         }
-    
+    }
+    public enum Commands { 
+        //Add your Command names here 
+        //For use them as string call Commands.EXIT.name() or for another class
+        //Board.Commands.Resume.toString()
+        Resume,
+        EXIT,
+        NewGame,
+        START;
     }
 }
