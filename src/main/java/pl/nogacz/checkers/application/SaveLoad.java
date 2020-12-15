@@ -187,18 +187,6 @@ public class SaveLoad {
                 blackQueenCoords.add(load.readLine());                        
             load.close();  
             
-            for(int i = 0; i < whiteCoords.size(); i++) {
-                System.out.println(whiteCoords.get(i));
-            }
-            for(int i = 0; i < blackCoords.size(); i++) {
-                System.out.println(blackCoords.get(i));
-            }
-            for(int i = 0; i < whiteQueenCoords.size(); i++) {
-                System.out.println(whiteQueenCoords.get(i));
-            }
-            for(int i = 0; i < blackQueenCoords.size(); i++) {
-                System.out.println(blackQueenCoords.get(i));
-            }
             for(int x = 0; x <= 7; x++) {
                 for(int y = 0; y <= 7; y++) {
                     Coordinates coord = new Coordinates(x,y);
