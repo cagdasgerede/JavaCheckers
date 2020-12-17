@@ -46,10 +46,10 @@ public class StartMenu extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         String command = actionEvent.getActionCommand();
-        if (command.equalsIgnoreCase(Board.Commands.START.name())) {
+        if(command.equalsIgnoreCase(Board.Commands.START.name())) {
             start_board.setMenuActive(false);;
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        } else if (command.equalsIgnoreCase(Board.Commands.EXIT.name())) {
+        }else if(command.equalsIgnoreCase(Board.Commands.EXIT.name())) {
             System.exit(0);
         }
     }
