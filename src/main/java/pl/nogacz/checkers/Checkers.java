@@ -1,20 +1,13 @@
 package pl.nogacz.checkers;
 
+import pl.nogacz.checkers.application.Design;
+import pl.nogacz.checkers.board.Board;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import pl.nogacz.checkers.application.Design;
-import pl.nogacz.checkers.board.Board;
 
-import javafx.scene.control.MenuBar;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
 
 /**
  * @author Dawid Nogacz on 17.05.2019

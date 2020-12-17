@@ -27,8 +27,6 @@ public class Design {
         return gridPane;
     }
 
-
-
     private void createBoardBackground() {
         Image background = new Image(Resources.getPath("board.png"));
         BackgroundSize backgroundSize = new BackgroundSize(750, 750, false, false, true, false);
@@ -78,4 +76,5 @@ public class Design {
     public static void removePawn(Coordinates coordinates) {
         gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
     }
+
 }
