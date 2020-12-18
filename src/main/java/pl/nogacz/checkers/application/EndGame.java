@@ -13,7 +13,6 @@ import java.util.Optional;
  * @author Dawid Nogacz on 25.05.2019
  */
 public class EndGame {
-
     public EndGame(String message) {
         printDialog(message);
     }

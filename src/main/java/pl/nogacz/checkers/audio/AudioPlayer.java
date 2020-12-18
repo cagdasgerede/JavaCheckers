@@ -27,7 +27,6 @@ public class AudioPlayer {
     private AudioPlayer(){
         listOfAudio = new ArrayList<>();
     }
-
     
     public static AudioPlayer getInstance(){
         if (instance == null) {
@@ -35,7 +34,6 @@ public class AudioPlayer {
           }
           return instance;
     }
-    
 
     private Clip getClip(String name){
         final URL file = AudioPlayer.class.getResource("/sounds/"+name);
