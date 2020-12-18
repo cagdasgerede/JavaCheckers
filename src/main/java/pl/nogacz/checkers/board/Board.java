@@ -13,6 +13,7 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+import pl.nogacz.checkers.pawns.PawnMovesUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,8 +40,14 @@ public class Board {
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
+    private BoardTree decisionTree = null;
+    private float pcDecisionScore = 0;
+    private float playerDecisionScore = 0;
+
     public Board() {
         addStartPawn();
+        Design.generateHealthBar(12, 12);
+        construcTree(isComputerRound);
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -77,7 +84,6 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
-        Design.changeScore(board);
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -231,6 +237,7 @@ public class Board {
 
         board.remove(oldCoordinates);
         board.put(newCoordinates, pawn);
+        changeScore(oldCoordinates, newCoordinates);
     }
 
     private boolean kickPawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
@@ -249,7 +256,7 @@ public class Board {
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
         board.put(newCoordinates, pawn);
-        Design.changeScore(board);
+        changeScore(oldCoordinates, newCoordinates);
         PawnMoves pawnMoves = new PawnMoves(newCoordinates, pawn);
 
         if(pawnMoves.getPossibleKick().size() > 0) {
@@ -384,15 +391,12 @@ public class Board {
 
         if(roundWithoutKick == 12) {
             isGameEnd = true;
-            Design.generateHealthBar(12, 12);
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
-            Design.generateHealthBar(0, 12);
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
-            Design.generateHealthBar(12, 0);
             new EndGame("You win! Congratulations! :)");
         }
     }
@@ -407,5 +411,158 @@ public class Board {
 
     public static PawnClass getPawn(Coordinates coordinates) {
         return board.get(coordinates);
+    }
+
+    public void changeScore(Coordinates oldCoordinates, Coordinates newCoordinates){
+        //Used algorithm for finding the ideal move is from : Victoria Nazari, Checkers, (2016), GitHub Repository,
+        //https://github.com/vnazz/checkers
+        float idealMoveScore   = decisionTree.findMaxScore();
+        float currentMoveScore = decisionTree.findMoveScore(oldCoordinates, newCoordinates);
+        if(idealMoveScore == 0){
+            idealMoveScore = 1;
+        } 
+        //punish negative moves 
+        if(idealMoveScore < 0){
+            idealMoveScore *= -3.0;
+        } 
+        else if(currentMoveScore < 0){
+            currentMoveScore *= 1.0/3;
+        }
+        int computerScore = pcScore(board);
+        int playerScore = playerScore(board);
+        int total = computerScore + playerScore;
+
+        if(isComputerRound){
+            pcDecisionScore += (currentMoveScore / idealMoveScore) * computerScore / total;
+        }else{
+            playerDecisionScore += (currentMoveScore / idealMoveScore) * playerScore / total;
+        }
+        
+        if(computerScore + pcDecisionScore < 0){
+            Design.generateHealthBar(playerScore + playerDecisionScore, 1);
+        } 
+        else if(playerScore + playerDecisionScore < 0){
+            Design.generateHealthBar(1, computerScore + pcDecisionScore);
+        }
+        else{
+            Design.generateHealthBar(playerScore + playerDecisionScore, computerScore + pcDecisionScore);
+        }
+        //prepare tree for next round
+        construcTree(!isComputerRound);
+    }
+
+    public void construcTree(boolean isComputerRound){
+        if(isComputerRound){
+            decisionTree = construcTreeUtil(PawnColor.BLACK, isComputerRound);
+        } else{
+            decisionTree = construcTreeUtil(PawnColor.WHITE, isComputerRound);
+        }
+    }
+
+    public BoardTree construcTreeUtil(PawnColor color, boolean isComputerRound){
+        //level 0 - > current board
+        BoardUtil currBoard = createBoard(this);
+        BoardTree tree_level0 = new BoardTree(currBoard, null, null, relativeScore(Board.board, isComputerRound));
+        
+        for(Map.Entry<Coordinates, PawnClass> entry : currBoard.getBoard().entrySet()){
+            if(!currBoard.isThisSameColor(new Coordinates(entry.getKey().getX(), entry.getKey().getY()), color)){
+                continue;
+            }
+            PawnMovesUtil moves = new PawnMovesUtil(entry.getKey(), entry.getValue(), createBoard(this));
+            for(Coordinates move : moves.getAutoMoves()){
+                //level 1 - > first possible moves
+                BoardUtil board_level1 = createBoard(this);
+                Coordinates oldCoordinates = new Coordinates(entry.getKey().getX(), entry.getKey().getY());
+                board_level1.automaticMove(oldCoordinates);//select the pawn
+                board_level1.automaticMove(move);//make the move
+                BoardTree tree_level1 = new BoardTree(board_level1, oldCoordinates, move, relativeScore(board_level1.getBoard(), isComputerRound));
+                
+                for(Map.Entry<Coordinates, PawnClass> entry_level1 : board_level1.getBoard().entrySet()){
+                    if(board_level1.isThisSameColor(new Coordinates(entry_level1.getKey().getX(), entry_level1.getKey().getY()), color)){//enemy move
+                        continue;
+                    }
+                    PawnMovesUtil moves2 = new PawnMovesUtil(entry_level1.getKey(), entry_level1.getValue(), board_level1);
+                    for(Coordinates move2 : moves2.getAutoMoves()){
+                        //level 2 - > second possible moves
+                        BoardUtil board_level2 = createBoard(board_level1);
+                        Coordinates oldCoordinates2 = new Coordinates(entry_level1.getKey().getX(), entry_level1.getKey().getY());
+                        board_level2.automaticMove(oldCoordinates2);
+                        board_level2.automaticMove(move2);
+                        BoardTree tree_level2 = new BoardTree(board_level2, oldCoordinates2, move2, relativeScore(board_level2.getBoard(), isComputerRound));
+
+                        for(Map.Entry<Coordinates, PawnClass> entry_level2 : board_level2.getBoard().entrySet()){
+                            if(!board_level2.isThisSameColor(new Coordinates(entry_level2.getKey().getX(), entry_level2.getKey().getY()), color)){
+                                continue;
+                            }
+                            PawnMovesUtil moves3 = new PawnMovesUtil(entry_level2.getKey(), entry_level2.getValue(), board_level2);
+                            for(Coordinates move3 : moves3.getAutoMoves()){
+                                //level 3 - > third possible moves
+                                BoardUtil board_level3 = createBoard(board_level2);
+                                Coordinates oldCoordinates3 = new Coordinates(entry_level2.getKey().getX(), entry_level2.getKey().getY());
+                                board_level3.automaticMove(oldCoordinates3);
+                                board_level3.automaticMove(move3);
+                                BoardTree tree_level3 = new BoardTree(board_level3, oldCoordinates3, move3, relativeScore(board_level3.getBoard(), isComputerRound));
+
+                                tree_level2.addChild(tree_level3);
+                            }
+                        }
+                        tree_level1.addChild(tree_level2);
+                    }
+                    tree_level0.addChild(tree_level1);
+                }
+            }     
+        }
+        
+        return tree_level0;
+    }
+
+    public int relativeScore(HashMap<Coordinates, PawnClass> board, boolean isComputerRound){
+        int computerScore = pcScore(board);
+        int playerScore = playerScore(board);
+
+        if(isComputerRound){
+            return computerScore-playerScore;
+        }
+        return playerScore-computerScore;
+    }
+    
+    public int pcScore(HashMap<Coordinates, PawnClass> board){
+        int score = 0;
+        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+            if(entry.getValue().getColor() == PawnColor.BLACK){
+                if(entry.getValue().getPawn().isQueen()){
+                    score += 3;
+                }
+                else{
+                    score++;
+                }
+            }
+        }
+        return score;
+    }
+
+    public int playerScore(HashMap<Coordinates, PawnClass> board){
+        int score = 0;
+        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+            if(entry.getValue().getColor() == PawnColor.WHITE){
+                if(entry.getValue().getPawn().isQueen()){
+                    score += 3;
+                }
+                else{
+                    score++;
+                }
+            }
+        }
+        return score;
+    }
+
+    public BoardUtil createBoard(Board board){
+        BoardUtil newBoard = new BoardUtil(board);
+        return newBoard;
+    }
+
+    public BoardUtil createBoard(BoardUtil board){
+        BoardUtil newBoard = new BoardUtil(board);
+        return newBoard;
     }
 }

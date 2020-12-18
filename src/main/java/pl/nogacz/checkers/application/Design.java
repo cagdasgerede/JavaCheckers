@@ -6,18 +6,16 @@ import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import pl.nogacz.checkers.board.Coordinates;
 import pl.nogacz.checkers.pawns.PawnClass;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import pl.nogacz.checkers.pawns.PawnColor;
-import java.util.HashMap;
-import java.util.Map;
 /**
  * @author Dawid Nogacz on 17.05.2019
  */
 public class Design {
+    private static final int TOTAL_LENGTH_OF_BARS = 680;
     private static GridPane gridPane = new GridPane();
     private static Image lightMove = new Image(Resources.getPath("light.png"));
 
@@ -69,31 +67,17 @@ public class Design {
     }
 
     public static void removePawn(Coordinates coordinates) {
-       gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
+        gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == coordinates.getX() && GridPane.getRowIndex(node) == coordinates.getY());
     }
 
-    public static void changeScore(HashMap<Coordinates, PawnClass> board){
-        int computerScore = 0;
-        int playerScore = 0;
-        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-            if(entry.getValue().getColor() == PawnColor.BLACK){
-                computerScore++;
-            }else if(entry.getValue().getColor() == PawnColor.WHITE){
-                playerScore++;
-            }
-        }
-        generateHealthBar(playerScore, computerScore);
-    }
+    public static void generateHealthBar(float playerScore, float computerScore){
+        removePawn(new Coordinates(0, 8));
+        removePawn(new Coordinates(0, 8));
 
-    public static void generateHealthBar(int playerScore, int computerScore){
-        //delete old bars
-        removePawn(new Coordinates(0,8));
-        removePawn(new Coordinates(0,8));
-
-        //decide bar lengths according to the current score
-        int total = computerScore+playerScore;
-        int userBarLength = 680*playerScore/total;
-        int pcBarLength   = 680*computerScore/total;
+        //portion the total length of bars according to the current score between user and pc
+        float total = computerScore + playerScore;
+        int userBarLength = (int)(TOTAL_LENGTH_OF_BARS * playerScore / total);
+        int pcBarLength   = (int)(TOTAL_LENGTH_OF_BARS * computerScore / total);
         Rectangle recUser = new Rectangle(0, 0, userBarLength, 15);
         Rectangle recPc   = new Rectangle(0, 0, pcBarLength, 15);
 

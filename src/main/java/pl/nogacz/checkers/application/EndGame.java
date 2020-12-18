@@ -13,6 +13,15 @@ import java.util.Optional;
  */
 public class EndGame {
     public EndGame(String message) {
+        if(message.contains("loss")){
+            Design.generateHealthBar(0, 12);
+        }
+        else if(message.contains("win")){
+            Design.generateHealthBar(12, 0);
+        }
+        else if(message.contains("draw")){
+            Design.generateHealthBar(12, 12);
+        }
         printDialog(message);
     }
 
