@@ -38,7 +38,7 @@ public class Board{
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
-    EditMenu editMenu;
+    private EditMenu editMenu;
     public Board() {
         addStartPawn();
     }
@@ -485,6 +485,10 @@ public class Board{
             selectedCoordinates = eventCoordinates;
             editLightSelect(eventCoordinates);
         }
+    }
+
+    public static boolean getIsEditMenuActive() {
+        return isEditMenuActive;
     }
 
 }

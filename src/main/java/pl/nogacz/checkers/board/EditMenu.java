@@ -204,6 +204,16 @@ public class EditMenu extends JFrame implements ActionListener {
     }
 
     public void forEachUnlightAddPawn() {
-        possibleReplaces.forEach(this::unLightReplace);
+        possibleAddPawns.forEach(this::unLightReplace);
     }
+
+    public JButton getReadyButton(){
+        return exitButton;
+    }
+
+    public boolean getIsEditMenuActive(){
+        return Board.getIsEditMenuActive();
+    }
+
+
 }
