@@ -23,10 +23,4 @@ public class CheckersTest {
         assertFalse(editMenu.getIsEditMenuActive());
     }
 
-    @Test
-    public void shouldGameMenuActiveWhenTabPressed(){
-        Board board = spy(new Board());
-
-    }
-
 }
