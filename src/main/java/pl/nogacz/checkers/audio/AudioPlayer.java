@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,6 +13,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AudioPlayer {
+    java.util.logging.Logger logger =  java.util.logging.Logger.getLogger(this.getClass().getName());
     private static AudioPlayer instance = null;
     private List<AudioClip> listOfAudio;
     private String BACKGROUND_MUSIC_FILE_NAME = "background2.wav";
@@ -43,11 +45,11 @@ public class AudioPlayer {
             clip.setMicrosecondPosition(0);
             return clip;
         } catch(UnsupportedAudioFileException e){
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "an exception was thrown in AudioPlayer, getClip()", e);
         } catch(IOException e){
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "an exception was thrown in AudioPlayer, getClip()", e);
         } catch(LineUnavailableException e){
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "an exception was thrown in AudioPlayer, getClip()", e);
         }
         return null;
     }
