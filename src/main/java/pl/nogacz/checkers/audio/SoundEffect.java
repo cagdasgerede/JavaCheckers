@@ -7,5 +7,4 @@ public class SoundEffect extends AudioClip {
     public SoundEffect(Clip clip) {
         super(clip);
     }
-    
 }

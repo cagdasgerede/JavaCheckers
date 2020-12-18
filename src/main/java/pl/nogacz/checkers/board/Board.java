@@ -13,7 +13,6 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
-
 import pl.nogacz.checkers.audio.AudioPlayer;
 
 import java.util.HashMap;
@@ -26,8 +25,6 @@ import java.util.Set;
  */
 public class Board {
     private static HashMap<Coordinates, PawnClass> board = new HashMap<>();
-
-    AudioPlayer audioPlayer = new AudioPlayer();
 
     private boolean isSelected = false;
     private boolean newKick = false;
@@ -124,7 +121,7 @@ public class Board {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
                 }
-                audioPlayer.playSoundEffect("pieceWon.wav");
+                AudioPlayer.getInstance().playPieceWonEffect();
             }
         } else if(eventCoordinates.isValid()) {
             if(isFieldNotNull(eventCoordinates)) {
@@ -179,7 +176,7 @@ public class Board {
                         selectedCoordinates = moveCoordinates;
                         computerMove();
                     }
-                    audioPlayer.playSoundEffect("pieceLost.wav");
+                    AudioPlayer.getInstance().playPieceLostEffect();
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
 
@@ -392,11 +389,11 @@ public class Board {
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
-            audioPlayer.playSoundEffect("gameLost.wav");
+            AudioPlayer.getInstance().playGameLostEffect();
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
-            audioPlayer.playSoundEffect("gameWon.wav");
+            AudioPlayer.getInstance().playGameWonEffect();
             new EndGame("You win! Congratulations! :)");
         }
     }

@@ -13,7 +13,6 @@ import java.util.Optional;
  * @author Dawid Nogacz on 25.05.2019
  */
 public class EndGame {
-    AudioPlayer audioPlayer = new AudioPlayer();
 
     public EndGame(String message) {
         printDialog(message);
@@ -23,8 +22,7 @@ public class EndGame {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle("JavaChess");
         alert.setContentText(message);
-
-        audioPlayer.playSoundEffect("menu.wav");
+        AudioPlayer.getInstance().playMenuEffect();
         
         ButtonType newGameButton = new ButtonType("New game");
         ButtonType exitButton = new ButtonType("Exit");

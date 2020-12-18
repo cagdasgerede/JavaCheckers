@@ -14,7 +14,6 @@ import pl.nogacz.checkers.board.Board;
 public class Checkers extends Application {
     Design design = new Design();
     Board board = new Board();
-    AudioPlayer audioPlayer = new AudioPlayer();
 
     public static void main(String[] args) {
         launch(args);
@@ -23,8 +22,8 @@ public class Checkers extends Application {
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(Design.getGridPane(), 750, 750, Color.BLACK);
-        audioPlayer.playBackgroundMusic("gameStart.wav");
-        audioPlayer.playBackgroundMusic("background2.wav");  //wav dosyasi cok yer kaplarsa, kisaltilip loop halinde eklenebilir daha sonra 
+        AudioPlayer.getInstance().playGameStartEffect();
+        AudioPlayer.getInstance().playBackgroundMusic();  //wav dosyasi cok yer kaplarsa, kisaltilip loop halinde eklenebilir daha sonra 
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
 
