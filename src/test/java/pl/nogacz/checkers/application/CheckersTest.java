@@ -12,8 +12,7 @@ import java.awt.event.KeyEvent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CheckersTest {
 
@@ -24,5 +23,10 @@ public class CheckersTest {
         assertFalse(editMenu.getIsEditMenuActive());
     }
 
+    @Test
+    public void shouldGameMenuActiveWhenTabPressed(){
+        Board board = spy(new Board());
+
+    }
 
 }
