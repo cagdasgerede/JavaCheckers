@@ -24,10 +24,10 @@ import java.util.Set;
 public class Board{
     private static HashMap<Coordinates, PawnClass> board = new HashMap<>();
 
-    private static boolean isPawnSelected = false;
+    protected static boolean isPawnSelected = false;
     private boolean newKick = false;
-    private static boolean isEditMenuActive = false;
-    private static Coordinates selectedCoordinates;
+    protected static boolean isEditMenuActive = false;
+    protected static Coordinates selectedCoordinates;
     private Set<Coordinates> possibleMoves = new HashSet<>();
     private Set<Coordinates> possibleKick = new HashSet<>();
     private Set<Coordinates> possiblePromote = new HashSet<>();
@@ -304,7 +304,7 @@ public class Board{
         possibleKick.forEach(this::lightKick);
         lightPawn(coordinates);
     }
-    private void editLightSelect(Coordinates coordinates) {
+    protected void editLightSelect(Coordinates coordinates) {
         editLightPawn(coordinates);
     }
 
@@ -325,17 +325,15 @@ public class Board{
         Design.removePawn(coordinates);
         Design.addLightPawn(coordinates, pawn);
     }
-    private void editLightPawn(Coordinates coordinates) {
-        PawnClass pawn = getPawn(coordinates);
-        Design.removePawn(coordinates);
-        Design.addEditLightPawn(coordinates,pawn);
+    protected void editLightPawn(Coordinates coordinates) {
+       EditMenu.editLightPawn(coordinates);
     }
 
     private void lightMove(Coordinates coordinates) {
         Design.addLightMove(coordinates);
     }
 
-    private void lightReplace(Coordinates coordinates) {
+    protected void lightReplace(Coordinates coordinates) {
         Design.addLightReplace(coordinates);
     }
 
@@ -353,11 +351,11 @@ public class Board{
 
         unLightPawn(coordinates);
     }
-    private void unLightEditSelect(Coordinates coordinates) {
-        unLightPawn(coordinates);
+    protected void unLightEditSelect(Coordinates coordinates) {
+        EditMenu.unLightEditSelect(coordinates);
     }
 
-    private void unLightPawn(Coordinates coordinates) {
+    protected static void unLightPawn(Coordinates coordinates) {
         PawnClass pawn = getPawn(coordinates);
         Design.removePawn(coordinates);
         Design.addPawn(coordinates, pawn);
@@ -421,17 +419,26 @@ public class Board{
     }
 
     public static void setEditMenuActive(boolean value){
-        isEditMenuActive = value;
+        EditMenu.setIsEditMenuActive(value);
     }
     public static void setIsPawnSelected(boolean value){
-        isPawnSelected = value;
+        EditMenu.setIsPawnSelected(value);
+    }
+
+    public boolean getIsPawnSelected(){
+        return  isPawnSelected;
     }
 
     public static Coordinates getSelectedCoordinates(){
         return selectedCoordinates;
     }
+
+    public  Coordinates getSelectedCoordinatesNotStatic(){
+        return selectedCoordinates;
+    }
+
     public static void setSelectedCoordinates(Coordinates coordinates){
-        selectedCoordinates = coordinates;
+        EditMenu.setSelectedCoordinates(coordinates);
     }
 
 
@@ -487,7 +494,7 @@ public class Board{
         }
     }
 
-    public static boolean getIsEditMenuActive() {
+    public boolean getIsEditMenuActive() {
         return isEditMenuActive;
     }
 

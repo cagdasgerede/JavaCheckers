@@ -18,9 +18,11 @@ import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+import static pl.nogacz.checkers.board.Board.getPawn;
+
 public class EditMenu extends JFrame implements ActionListener {
 
-    private static Coordinates addPawnCoordinates;
+    protected static Coordinates addPawnCoordinates;
 
     private Set<Coordinates> possibleReplaces = new HashSet<>();
     private Set<Coordinates> possibleAddPawns = new HashSet<>();
@@ -65,6 +67,14 @@ public class EditMenu extends JFrame implements ActionListener {
         setVisible(true);
         setLocation(1330,200);
         toFront();
+    }
+
+    protected static void setIsPawnSelected(boolean value) {
+        Board.isPawnSelected = value;
+    }
+
+    protected static void setIsEditMenuActive(boolean value) {
+        Board.isEditMenuActive = value;
     }
 
     private void setButtons() {
@@ -170,50 +180,56 @@ public class EditMenu extends JFrame implements ActionListener {
         }
     }
 
-    public Coordinates getAddPawnCoordinates() {
+    protected static Coordinates getAddPawnCoordinates() {
         return addPawnCoordinates;
     }
-    public static void setAddPawnCoordinates(Coordinates coordinates) {
+
+    protected static void setAddPawnCoordinates(Coordinates coordinates) {
         addPawnCoordinates = coordinates;
     }
-    public void unLightReplace(Coordinates coordinates) {
-        PawnClass pawn = Board.getPawn(coordinates);
+    protected void unLightReplace(Coordinates coordinates) {
+        PawnClass pawn = getPawn(coordinates);
         Design.removePawn(coordinates);
         if(pawn!= null){
             Design.addPawn(coordinates,pawn);
         }
     }
-    public void replacePawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
-        PawnClass pawn = Board.getPawn(oldCoordinates);
+    protected void replacePawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
+        PawnClass pawn = getPawn(oldCoordinates);
         Design.removePawn(oldCoordinates);
         Design.addPawn(newCoordinates,pawn);
         Board.getBoard().remove(oldCoordinates);
         Board.getBoard().put(newCoordinates, pawn);
     }
 
-    public Set<Coordinates> getPossibleReplaces() {
+    protected Set<Coordinates> getPossibleReplaces() {
         return possibleReplaces;
     }
 
-    public Set<Coordinates> getPossibleAddPawns() {
+    protected Set<Coordinates> getPossibleAddPawns() {
         return  possibleAddPawns;
     }
 
-    public void forEachUnlightPossibleReplace() {
+    protected void forEachUnlightPossibleReplace() {
         possibleReplaces.forEach(this::unLightReplace);
     }
 
-    public void forEachUnlightAddPawn() {
+    protected void forEachUnlightAddPawn() {
         possibleAddPawns.forEach(this::unLightReplace);
     }
 
-    public JButton getReadyButton(){
-        return exitButton;
+    protected static void unLightEditSelect(Coordinates coordinates) {
+        Board.unLightPawn(coordinates);
     }
 
-    public boolean getIsEditMenuActive(){
-        return Board.getIsEditMenuActive();
+    protected static void editLightPawn(Coordinates coordinates) {
+        PawnClass pawn = getPawn(coordinates);
+        Design.removePawn(coordinates);
+        Design.addEditLightPawn(coordinates,pawn);
     }
 
+    protected static void setSelectedCoordinates(Coordinates coordinates){
+        Board.selectedCoordinates = coordinates;
+    }
 
 }
