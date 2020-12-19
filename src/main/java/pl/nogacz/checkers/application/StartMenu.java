@@ -58,6 +58,7 @@ public class StartMenu extends JFrame implements ActionListener {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setUndecorated(true);
+        Board ozan = new Board(); // is working
         this.setBackground(new Color(0, 0, 0, 100));//transparent black
         this.add(startButton);
         this.add(exitButton); 

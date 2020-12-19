@@ -154,7 +154,7 @@ public class Board {
         }
         if(event.getCode().equals(KeyCode.ESCAPE)) {
             isMenuActive = true;
-            Menu menu = new Menu(this);
+            Menu menu = new Menu();
         }
     }
 
@@ -438,13 +438,41 @@ public class Board {
         String fileString = this.getClass().getClassLoader().getResource(name).getFile();
         return new ImageIcon(fileString);
     }
-     class Menu extends JFrame implements ActionListener{
+    public void restart()
+    {
+        Platform.runLater(() -> {
+            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                Design.removePawn(entry.getKey());
+            }
+            board.clear();
+            for (int i = 1; i <= 7; i+=2) {
+                for (int j = 0; j <= 2; j+=2) {
+                    board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+                }
+            }
+            for (int i = 0; i <= 6; i+=2) {
+                board.put(new Coordinates(i, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
+            }
+            for (int i = 0; i <= 6; i+=2) {
+                for (int j = 5; j <=7; j+=2) {
+                    board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+                }
+            }
+            for (int i = 1; i <= 7; i+=2) {
+                board.put(new Coordinates(i, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
+            }
+            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                Design.addPawn(entry.getKey(), entry.getValue());
+            }
+        });
+    }
+    public class Menu extends JFrame implements ActionListener{
         public static final int WIDTH = 500;
         public static final int HEIGHT = 500;
         private JButton resumeButton = new JButton(Commands.Resume.name());
         private JButton newGameButton = new JButton(Commands.NewGame.name());
         private JButton exitButton = new JButton(Commands.EXIT.name());
-        public Menu(Board board) {
+        public Menu() {
             super("Game Menu");
             setSize(WIDTH, HEIGHT);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -483,35 +511,6 @@ public class Board {
             }else if(command.equalsIgnoreCase(Commands.EXIT.name())){
                 System.exit(0);
             }
-        }
-
-        public void restart()
-        {
-            Platform.runLater(() -> {
-                for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-                    Design.removePawn(entry.getKey());
-                 }
-                board.clear();
-                for (int i = 1; i <= 7; i+=2) {
-                    for (int j = 0; j <= 2; j+=2) {
-                        board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-                    }
-                }
-                for (int i = 0; i <= 6; i+=2) {
-                    board.put(new Coordinates(i, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-                }
-                for (int i = 0; i <= 6; i+=2) {
-                    for (int j = 5; j <=7; j+=2) {
-                        board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-                    }
-                }
-                for (int i = 1; i <= 7; i+=2) {
-                    board.put(new Coordinates(i, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-                }
-                for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-                    Design.addPawn(entry.getKey(), entry.getValue());
-                }
-            });
         }
     }
     public enum Commands { 
