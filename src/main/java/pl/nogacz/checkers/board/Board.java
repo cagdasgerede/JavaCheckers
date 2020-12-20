@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
+import pl.nogacz.checkers.application.Restart;
 import pl.nogacz.checkers.application.StartMenu;
 
 import pl.nogacz.checkers.pawns.Pawn;
@@ -423,6 +424,10 @@ public class Board {
         return getPawn(coordinates).getColor() == color;
     }
 
+    public static void setBoard(HashMap<Coordinates, PawnClass> board) {
+        Board.board = board;
+    }
+
     public static PawnClass getPawn(Coordinates coordinates) {
         return board.get(coordinates);
     }
@@ -438,34 +443,7 @@ public class Board {
         String fileString = this.getClass().getClassLoader().getResource(name).getFile();
         return new ImageIcon(fileString);
     }
-    public void restart()
-    {
-        Platform.runLater(() -> {
-            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-                Design.removePawn(entry.getKey());
-            }
-            board.clear();
-            for (int i = 1; i <= 7; i+=2) {
-                for (int j = 0; j <= 2; j+=2) {
-                    board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-                }
-            }
-            for (int i = 0; i <= 6; i+=2) {
-                board.put(new Coordinates(i, 1), new PawnClass(Pawn.PAWN, PawnColor.BLACK));
-            }
-            for (int i = 0; i <= 6; i+=2) {
-                for (int j = 5; j <=7; j+=2) {
-                    board.put(new Coordinates(i, j), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-                }
-            }
-            for (int i = 1; i <= 7; i+=2) {
-                board.put(new Coordinates(i, 6), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-            }
-            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-                Design.addPawn(entry.getKey(), entry.getValue());
-            }
-        });
-    }
+
     public class Menu extends JFrame implements ActionListener{
         public static final int WIDTH = 500;
         public static final int HEIGHT = 500;
@@ -507,7 +485,7 @@ public class Board {
                 isMenuActive=false;
                 this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
             }else if(command.equalsIgnoreCase(Commands.NewGame.name())) {
-                restart();
+                Restart.restartGame();
             }else if(command.equalsIgnoreCase(Commands.EXIT.name())){
                 System.exit(0);
             }
