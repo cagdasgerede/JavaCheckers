@@ -1,14 +1,16 @@
 package pl.nogacz.checkers.board;
 import org.junit.jupiter.api.Test;
+import pl.nogacz.checkers.pawns.Pawn;
+import pl.nogacz.checkers.pawns.PawnClass;
+import pl.nogacz.checkers.pawns.PawnColor;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CheckersTest {
+public class EditMenuTest {
 
     @Test
     void pawnSelectedTest() {
@@ -54,4 +56,35 @@ public class CheckersTest {
         EditMenu.setAddPawnCoordinates(new Coordinates(0,0));
         assertEquals(new Coordinates(0,0),EditMenu.getAddPawnCoordinates());
     }
+
+    @Test
+    void replacePawnTest(){
+        EditMenu editMenu = new EditMenu();
+        Board.getBoard().put(new Coordinates(0,0),new PawnClass(Pawn.PAWN,PawnColor.BLACK));
+        editMenu.replacePawnForTest(new Coordinates(0,0), new Coordinates(1,1));
+        PawnClass pawn = Board.getPawn(new Coordinates(1,1));
+        assertNull(Board.getBoard().get(new Coordinates(0,0)));
+        assertTrue((pawn.getPawn() == Pawn.PAWN && pawn.getColor() == PawnColor.BLACK));
+    }
+
+    @Test
+    void removePawnTest(){
+        EditMenu editMenu = new EditMenu();
+        Coordinates coordinates = new Coordinates(5,5);
+        Board.getBoard().put(coordinates,new PawnClass(Pawn.PAWN,PawnColor.WHITE));
+        editMenu.removePawn(new Coordinates(5,5));
+        assertNull(Board.getBoard().get(coordinates));
+    }
+
+    @Test
+    void addPawnTest(){
+        EditMenu editMenu = new EditMenu();
+        Coordinates coordinates = new Coordinates(0,0);
+        assertNull(Board.getBoard().get(coordinates));
+        PawnClass pawn = new PawnClass(Pawn.PAWN,PawnColor.BLACK);
+        editMenu.addPawn(coordinates,pawn);
+        assertTrue((Board.getBoard().get(coordinates).getPawn() == Pawn.PAWN
+                && Board.getBoard().get(coordinates).getColor() == PawnColor.BLACK));
+    }
+
 }

@@ -441,7 +441,6 @@ public class Board{
         EditMenu.setSelectedCoordinates(coordinates);
     }
 
-
     private void runEditMenuFunctions(Coordinates eventCoordinates) {
         if(isPawnSelected) {
             if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()

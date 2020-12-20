@@ -22,6 +22,8 @@ Mouse
 
 R and N keys - restart game
 
+TAB key - edit menu
+
 ## Author
 Dawid "Sloenthran" Nogacz
 

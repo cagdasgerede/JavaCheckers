@@ -64,7 +64,6 @@ public class Design {
         gridPane.add(pawn.getEditLightImage(),coordinates.getX(),coordinates.getY());
     }
 
-
     public static void addLightMove(Coordinates coordinates) {
         gridPane.add(new ImageView(lightMove), coordinates.getX(), coordinates.getY());
     }
