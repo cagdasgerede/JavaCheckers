@@ -59,9 +59,8 @@ public class EditMenuTest {
 
     @Test
     void replacePawnTest(){
-        EditMenu editMenu = new EditMenu();
         Board.getBoard().put(new Coordinates(0,0),new PawnClass(Pawn.PAWN,PawnColor.BLACK));
-        editMenu.replacePawnForTest(new Coordinates(0,0), new Coordinates(1,1));
+        EditMenu.replacePawnForTest(new Coordinates(0,0), new Coordinates(1,1));
         PawnClass pawn = Board.getPawn(new Coordinates(1,1));
         assertNull(Board.getBoard().get(new Coordinates(0,0)));
         assertTrue((pawn.getPawn() == Pawn.PAWN && pawn.getColor() == PawnColor.BLACK));
@@ -69,20 +68,18 @@ public class EditMenuTest {
 
     @Test
     void removePawnTest(){
-        EditMenu editMenu = new EditMenu();
         Coordinates coordinates = new Coordinates(5,5);
         Board.getBoard().put(coordinates,new PawnClass(Pawn.PAWN,PawnColor.WHITE));
-        editMenu.removePawn(new Coordinates(5,5));
+        EditMenu.removePawn(new Coordinates(5,5));
         assertNull(Board.getBoard().get(coordinates));
     }
 
     @Test
     void addPawnTest(){
-        EditMenu editMenu = new EditMenu();
         Coordinates coordinates = new Coordinates(0,0);
         assertNull(Board.getBoard().get(coordinates));
         PawnClass pawn = new PawnClass(Pawn.PAWN,PawnColor.BLACK);
-        editMenu.addPawn(coordinates,pawn);
+        EditMenu.addPawn(coordinates,pawn);
         assertTrue((Board.getBoard().get(coordinates).getPawn() == Pawn.PAWN
                 && Board.getBoard().get(coordinates).getColor() == PawnColor.BLACK));
     }

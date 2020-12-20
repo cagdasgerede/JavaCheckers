@@ -30,8 +30,6 @@ public class EditMenu extends JFrame implements ActionListener {
     private static final int WIDTH = 350;
     private static final int HEIGHT = 550;
 
-
-
     private static final int BUTTON_WIDTH = 300;
     private static final int BUTTON_HEIGHT = 60;
 
@@ -205,7 +203,7 @@ public class EditMenu extends JFrame implements ActionListener {
         Board.getBoard().put(newCoordinates, pawn);
     }
 
-    protected void replacePawnForTest(Coordinates oldCoordinates, Coordinates newCoordinates) {
+    protected static void replacePawnForTest(Coordinates oldCoordinates, Coordinates newCoordinates) {
         PawnClass pawn = getPawn(oldCoordinates);
         Board.getBoard().remove(oldCoordinates);
         Board.getBoard().put(newCoordinates, pawn);
@@ -241,11 +239,11 @@ public class EditMenu extends JFrame implements ActionListener {
         Board.selectedCoordinates = coordinates;
     }
 
-    protected void removePawn(Coordinates coordinates){
+    protected static void removePawn(Coordinates coordinates){
         Board.getBoard().remove(coordinates);
     }
 
-    protected void addPawn(Coordinates coordinates,PawnClass pawn) {
+    protected static void addPawn(Coordinates coordinates, PawnClass pawn) {
         Board.getBoard().put(coordinates,pawn);
     }
 }
