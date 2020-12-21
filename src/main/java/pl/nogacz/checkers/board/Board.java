@@ -447,8 +447,8 @@ public class Board {
     public class Menu extends JFrame implements ActionListener{
         public static final int WIDTH = 500;
         public static final int HEIGHT = 500;
-        private JButton resumeButton = new JButton(Commands.Resume.name());
-        private JButton newGameButton = new JButton(Commands.NewGame.name());
+        private JButton resumeButton = new JButton(Commands.RESUME.name());
+        private JButton newGameButton = new JButton(Commands.NEW_GAME.name());
         private JButton exitButton = new JButton(Commands.EXIT.name());
         public Menu() {
             super("Game Menu");
@@ -481,12 +481,12 @@ public class Board {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             String command = actionEvent.getActionCommand();
-            if(command.equalsIgnoreCase(Commands.Resume.name())) {
+            if(command.equalsIgnoreCase(Commands.RESUME.name())) {
                 isMenuActive=false;
                 this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
-            }else if(command.equalsIgnoreCase(Commands.NewGame.name())) {
+            } else if(command.equalsIgnoreCase(Commands.NEW_GAME.name())) {
                 Restart.restartGame();
-            }else if(command.equalsIgnoreCase(Commands.EXIT.name())){
+            } else if(command.equalsIgnoreCase(Commands.EXIT.name())){
                 System.exit(0);
             }
         }
@@ -495,9 +495,9 @@ public class Board {
         //Add your Command names here 
         //For use them as string call Commands.EXIT.name() or for another class
         //Board.Commands.Resume.toString()
-        Resume,
+        RESUME,
         EXIT,
-        NewGame,
+        NEW_GAME,
         START;
     }
 }

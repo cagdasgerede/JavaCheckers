@@ -1,13 +1,14 @@
 package pl.nogacz.checkers.application;
 
 import pl.nogacz.checkers.application.Restart;
-import pl.nogacz.checkers.board.*;
+import pl.nogacz.checkers.board.Board;
+import pl.nogacz.checkers.board.Coordinates;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
-import static org.mockito.Mockito.*;
+
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
