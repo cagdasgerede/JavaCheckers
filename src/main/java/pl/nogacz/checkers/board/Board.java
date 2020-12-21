@@ -443,34 +443,18 @@ public class Board{
 
     private void runEditMenuFunctions(Coordinates eventCoordinates) {
         if(isPawnSelected) {
-            if(eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()
-                    || (eventCoordinates.getX() == editMenu.getAddPawnCoordinates().getX() && eventCoordinates.getY() ==  editMenu.getAddPawnCoordinates().getY())){
+            if(isSameAreaSelected(eventCoordinates)){
                 if(isFieldNotNull(eventCoordinates)) {
-                    editMenu.forEachUnlightPossibleReplace();
-                    editMenu.forEachUnlightAddPawn();
-                    unLightEditSelect(eventCoordinates);
-                    editMenu.getPossibleReplaces().clear();
-                    editMenu.getPossibleAddPawns().clear();
+                    unlightPawn(eventCoordinates);
                 }
                 else {
-                    editMenu.forEachUnlightPossibleReplace();
-                    editMenu.forEachUnlightAddPawn();
-                    editMenu.unLightReplace(eventCoordinates);
-                    editMenu.getPossibleReplaces().clear();
-                    editMenu.getPossibleAddPawns().clear();
+                    unlightReplaceLight(eventCoordinates);
                 }
                 isPawnSelected = false;
             }
             else if(!isFieldNotNull(eventCoordinates)){
                 if(eventCoordinates.isValid()) {
-                    editMenu.forEachUnlightPossibleReplace();
-                    editMenu.forEachUnlightAddPawn();
-                    lightReplace(eventCoordinates);
-                    editMenu.getPossibleReplaces().clear();
-                    editMenu.getPossibleAddPawns().clear();
-                    editMenu.getPossibleReplaces().add(eventCoordinates);
-                    editMenu.getPossibleAddPawns().add(eventCoordinates);
-                    editMenu.setAddPawnCoordinates(eventCoordinates);
+                   lightSelectedEmptyArea(eventCoordinates);
                 }
             }
         }
@@ -493,8 +477,39 @@ public class Board{
         }
     }
 
+    public boolean isSameAreaSelected(Coordinates eventCoordinates){
+        return (eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()
+                || eventCoordinates.getX() == editMenu.getAddPawnCoordinates().getX() && eventCoordinates.getY() ==  editMenu.getAddPawnCoordinates().getY());
+    }
     public boolean getIsEditMenuActive() {
         return isEditMenuActive;
+    }
+
+    public void unlightPawn(Coordinates eventCoordinates){
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        unLightEditSelect(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+    }
+
+    public void unlightReplaceLight(Coordinates eventCoordinates){
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        editMenu.unLightReplace(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+    }
+
+    public void lightSelectedEmptyArea(Coordinates eventCoordinates) {
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        lightReplace(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+        editMenu.getPossibleReplaces().add(eventCoordinates);
+        editMenu.getPossibleAddPawns().add(eventCoordinates);
+        editMenu.setAddPawnCoordinates(eventCoordinates);
     }
 
 }
