@@ -23,7 +23,7 @@ public class Checkers extends Application {
     public void start(Stage primaryStage) {
         Scene scene = new Scene(Design.getGridPane(), 750, 750, Color.BLACK);
         AudioPlayer.getInstance().playGameStartEffect();
-        AudioPlayer.getInstance().playBackgroundMusic();  //wav dosyasi cok yer kaplarsa, kisaltilip loop halinde eklenebilir daha sonra 
+        AudioPlayer.getInstance().playBackgroundMusic();
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
 
