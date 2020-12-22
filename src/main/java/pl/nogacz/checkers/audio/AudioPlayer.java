@@ -16,7 +16,7 @@ public class AudioPlayer {
     java.util.logging.Logger logger =  java.util.logging.Logger.getLogger(this.getClass().getName());
     private static AudioPlayer instance = null;
     private List<AudioClip> listOfAudio;
-    private final static String BACKGROUND_MUSIC_FILE_NAME = "background2.wav";
+    private final static String BACKGROUND_MUSIC_FILE_NAME = "background.wav";
     private final static String GAME_WON_SOUND_EFFECT_FILE_NAME = "gameWon.wav";
     private final static String GAME_LOST_SOUND_EFFECT_FILE_NAME = "gameLost.wav";
     private final static String PIECE_WON_SOUND_EFFECT_FILE_NAME = "pieceWon.wav";
@@ -54,6 +54,8 @@ public class AudioPlayer {
 
     public void playBackgroundMusic(){
         final Clip clip = getClip(BACKGROUND_MUSIC_FILE_NAME);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        clip.start();
         listOfAudio.add(new BackgroundMusic(clip));
     }
 
