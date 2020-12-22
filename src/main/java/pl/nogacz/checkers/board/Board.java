@@ -9,11 +9,11 @@ import javafx.scene.input.MouseEvent;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
+import pl.nogacz.checkers.audio.AudioPlayer;
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
-import pl.nogacz.checkers.audio.AudioPlayer;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -16,13 +16,13 @@ public class AudioPlayer {
     java.util.logging.Logger logger =  java.util.logging.Logger.getLogger(this.getClass().getName());
     private static AudioPlayer instance = null;
     private List<AudioClip> listOfAudio;
-    private String BACKGROUND_MUSIC_FILE_NAME = "background2.wav";
-    private String GAME_WON_SOUND_EFFECT_FILE_NAME = "gameWon.wav";
-    private String GAME_LOST_SOUND_EFFECT_FILE_NAME = "gameLost.wav";
-    private String PIECE_WON_SOUND_EFFECT_FILE_NAME = "pieceWon.wav";
-    private String PIECE_LOST_SOUND_EFFECT_FILE_NAME = "pieceLost.wav";
-    private String GAME_START_SOUND_EFFECT_FILE_NAME = "gameStart.wav";
-    private String MENU_SOUND_EFFECT_FILE_NAME = "menu.wav";
+    private final static String BACKGROUND_MUSIC_FILE_NAME = "background2.wav";
+    private final static String GAME_WON_SOUND_EFFECT_FILE_NAME = "gameWon.wav";
+    private final static String GAME_LOST_SOUND_EFFECT_FILE_NAME = "gameLost.wav";
+    private final static String PIECE_WON_SOUND_EFFECT_FILE_NAME = "pieceWon.wav";
+    private final static String PIECE_LOST_SOUND_EFFECT_FILE_NAME = "pieceLost.wav";
+    private final static String GAME_START_SOUND_EFFECT_FILE_NAME = "gameStart.wav";
+    private final static String MENU_SOUND_EFFECT_FILE_NAME = "menu.wav";
 
     private AudioPlayer(){
         listOfAudio = new ArrayList<>();
