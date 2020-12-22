@@ -153,9 +153,9 @@ public class Board {
 
     public void readKeyboard(KeyEvent event) {
         if(event.getCode().equals(KeyCode.R) || event.getCode().equals(KeyCode.N)) {
-            EndGame.restartApplication();
+            Restart.restartGame();
         }
-        if(event.getCode().equals(KeyCode.ESCAPE)) {
+        if(event.getCode().equals(KeyCode.ESCAPE) && !isMenuActive) {
             isMenuActive = true;
             Menu menu = new Menu();
         }
