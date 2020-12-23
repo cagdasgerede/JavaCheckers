@@ -15,7 +15,7 @@ import pl.nogacz.checkers.pawns.PawnClass;
  * @author Dawid Nogacz on 17.05.2019
  */
 public class Design {
-    private static final int TOTAL_LENGTH_OF_BARS = 680;
+    private static final int TOTAL_LENGTH_OF_HEALTH_BARS = 680;
     private static GridPane gridPane = new GridPane();
     private static Image lightMove = new Image(Resources.getPath("light.png"));
 
@@ -76,8 +76,8 @@ public class Design {
 
         //portion the total length of bars according to the current score between user and pc
         float total = computerScore + playerScore;
-        int userBarLength = (int)(TOTAL_LENGTH_OF_BARS * playerScore / total);
-        int pcBarLength   = (int)(TOTAL_LENGTH_OF_BARS * computerScore / total);
+        int userBarLength = (int)(TOTAL_LENGTH_OF_HEALTH_BARS * playerScore / total);
+        int pcBarLength   = (int)(TOTAL_LENGTH_OF_HEALTH_BARS * computerScore / total);
         Rectangle recUser = new Rectangle(0, 0, userBarLength, 15);
         Rectangle recPc   = new Rectangle(0, 0, pcBarLength, 15);
 

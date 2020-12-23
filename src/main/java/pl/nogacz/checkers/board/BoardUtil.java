@@ -25,32 +25,8 @@ public class BoardUtil {
     private boolean isGameEnd = false;
     private int roundWithoutKick = 0;
 
-    
-    public BoardUtil(Board board) {
-        for(Map.Entry<Coordinates, PawnClass> entry : Board.getBoard().entrySet()){
-            PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.WHITE);
-            if(entry.getValue().getColor() == PawnColor.BLACK){
-                if(entry.getValue().getPawn().isQueen()){
-                    pawn = new PawnClass(Pawn.QUEEN, PawnColor.BLACK);
-                }
-                else{
-                    pawn = new PawnClass(Pawn.PAWN, PawnColor.BLACK);
-                }
-            }
-            else if (entry.getValue().getColor() == PawnColor.WHITE){
-                if(entry.getValue().getPawn().isQueen()){
-                    pawn = new PawnClass(Pawn.QUEEN, PawnColor.WHITE);
-                }
-                else{
-                    pawn = new PawnClass(Pawn.PAWN, PawnColor.WHITE);
-                }
-            }
-            this.board.put(new Coordinates(entry.getKey().getX(), entry.getKey().getY()), pawn);
-        }
-    }
-
-    public BoardUtil(BoardUtil board) {
-        for(Map.Entry<Coordinates, PawnClass> entry : board.getBoard().entrySet()){
+    public BoardUtil(HashMap<Coordinates, PawnClass> boardMap) {
+        for(Map.Entry<Coordinates, PawnClass> entry : boardMap.entrySet()){
             PawnClass pawn = new PawnClass(Pawn.PAWN, PawnColor.WHITE);
             if(entry.getValue().getColor() == PawnColor.BLACK){
                 if(entry.getValue().getPawn().isQueen()){
