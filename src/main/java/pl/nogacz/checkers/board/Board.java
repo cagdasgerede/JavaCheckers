@@ -74,20 +74,73 @@ public class Board {
         board.put(new Coordinates(2, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
         board.put(new Coordinates(4, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
         board.put(new Coordinates(6, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-
+        
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
     }
-    public  boolean getisBlackRound(){
-        if(isBlackRound)
+    public  boolean IsTurnOfBlack(){
+        if(isBlackRound){
         return true;
-        else 
+        } else{ 
         return false;
+        }
     }
 
     public void readMouseEvent(MouseEvent event) {
-        System.out.println("sira beyaz");
+        if(isComputerRound) {
+            return;
+        }
+
+        checkGameEnd();
+
+        if(isGameEnd) {
+            return;
+        }
+
+        Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+
+        if(isSelected) {
+            if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+                unLightSelect(selectedCoordinates);
+
+                selectedCoordinates = null;
+                isSelected = false;
+            } else if(possibleMoves.contains(eventCoordinates)) {
+                roundWithoutKick++;
+
+                unLightSelect(selectedCoordinates);
+                movePawn(selectedCoordinates, eventCoordinates);
+                selectedCoordinates = null;
+                isSelected = false;
+
+                computerMove();
+            } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                roundWithoutKick = 0;
+
+                unLightSelect(selectedCoordinates);
+
+                if(!kickPawn(selectedCoordinates, eventCoordinates)) {
+                    isSelected = false;
+                    newKick = false;
+                    computerMove();
+                } else {
+                    newKick = true;
+                    selectedCoordinates = eventCoordinates;
+                }
+            }
+        } else if(eventCoordinates.isValid()) {
+            if(isFieldNotNull(eventCoordinates)) {
+                if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
+                    isSelected = true;
+                    selectedCoordinates = eventCoordinates;
+                    lightSelect(eventCoordinates);
+                }
+            }
+        }
+    }
+
+    public void readMouseEventWhite(MouseEvent event) {
        if(isBlackRound){
         readMouseEventBlack(event);
         return;
@@ -115,8 +168,6 @@ public class Board {
                 isSelected = false;
                 isBlackRound=true;
                 
-                //computerMove();
-                
             } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                 roundWithoutKick = 0;
 
@@ -126,8 +177,7 @@ public class Board {
                     isSelected = false;
                     newKick = false;
                     isBlackRound=true;
-                    
-                //    computerMove();
+
                 
                 } else {
                     newKick = true;
@@ -143,10 +193,9 @@ public class Board {
                 }
             }
         }
-        System.out.println(isBlackRound+" yukari");
+       
     }
     public void readMouseEventBlack(MouseEvent event) {
-        
 
         checkGameEnd();
 
@@ -169,9 +218,7 @@ public class Board {
                 movePawn(selectedCoordinates, eventCoordinates);
                 selectedCoordinates = null;
                 isSelected = false;
-
-             //   computerMove();
-             isBlackRound =false;
+                isBlackRound =false;
             } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                 roundWithoutKick = 0;
 
@@ -180,8 +227,8 @@ public class Board {
                 if(!kickPawn(selectedCoordinates, eventCoordinates)) {
                     isSelected = false;
                     newKick = false;
-               //     computerMove();
-               isBlackRound =false;
+                    isBlackRound =false;
+
                 } else {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
@@ -196,7 +243,6 @@ public class Board {
                 }
             }
         }
-        System.out.println(isBlackRound+" assa");
     }
 
     public void readKeyboard(KeyEvent event) {
@@ -247,7 +293,6 @@ public class Board {
                     isComputerRound = false;
                     selectedCoordinates = null;
                 }
-
 
             }
         });
