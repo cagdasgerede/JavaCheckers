@@ -13,6 +13,7 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+import pl.nogacz.checkers.board.BoardPoint;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,8 +40,13 @@ public class Board {
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
+
+    ///////////
+    BoardPoint boardPoint = new BoardPoint();
+    //////////////
     public Board() {
         addStartPawn();
+        boardPoint.updatePoints(); //=// 
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -193,7 +199,7 @@ public class Board {
         }
 
         lightSelect(selectedCoordinates);
-
+        boardPoint.updatePoints(); //=// 
         new Thread(computerSleep).start();
     }
 
@@ -227,9 +233,9 @@ public class Board {
         Design.removePawn(oldCoordinates);
         Design.removePawn(newCoordinates);
         Design.addPawn(newCoordinates, pawn);
-
         board.remove(oldCoordinates);
         board.put(newCoordinates, pawn);
+         boardPoint.updatePoints();//=// 
     }
 
     private boolean kickPawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
@@ -248,9 +254,9 @@ public class Board {
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
         board.put(newCoordinates, pawn);
-
+        boardPoint.updatePoints(); //=// 
         PawnMoves pawnMoves = new PawnMoves(newCoordinates, pawn);
-
+        
         if(pawnMoves.getPossibleKick().size() > 0) {
             lightNewKick(newCoordinates);
             return true;
