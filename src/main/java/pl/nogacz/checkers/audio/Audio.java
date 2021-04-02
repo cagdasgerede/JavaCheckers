@@ -2,7 +2,6 @@ package pl.nogacz.checkers.audio;
 import pl.nogacz.checkers.application.Resources;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import javax.sound.sampled.*;
 /*
     Sound effects gotten from https://freesound.org/ 
