@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.board.Board;
+import pl.nogacz.checkers.audio.Audio;
 
 /**
  * @author Dawid Nogacz on 17.05.2019
@@ -20,6 +21,7 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
         Scene scene = new Scene(design.getGridPane(), 750, 750, Color.BLACK);
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
