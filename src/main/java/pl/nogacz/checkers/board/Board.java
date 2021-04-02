@@ -13,6 +13,8 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+import pl.nogacz.checkers.audio.Audio;
+
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,9 +40,15 @@ public class Board {
 
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
+    private Audio play;
 
     public Board() {
         addStartPawn();
+         play=new Audio();
+         play.background.play();
+         
+         
+        
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -100,21 +108,30 @@ public class Board {
                 isSelected = false;
             } else if(possibleMoves.contains(eventCoordinates)) {
                 roundWithoutKick++;
-
+                
                 unLightSelect(selectedCoordinates);
                 movePawn(selectedCoordinates, eventCoordinates);
+
+                play.placementWhite.play();
+                
+                
+                
                 selectedCoordinates = null;
                 isSelected = false;
 
                 computerMove();
+                
+
             } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                 roundWithoutKick = 0;
 
                 unLightSelect(selectedCoordinates);
+                play.placementWhite.play();
 
                 if(!kickPawn(selectedCoordinates, eventCoordinates)) {
                     isSelected = false;
                     newKick = false;
+
                     computerMove();
                 } else {
                     newKick = true;
@@ -149,7 +166,8 @@ public class Board {
             @Override
             protected Void call() throws Exception {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
+                    play.placementWhite.play();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -261,7 +279,6 @@ public class Board {
 
     private Coordinates getEnemyCoordinates(Coordinates coordinates) {
         Coordinates checkUpLeft = new Coordinates(coordinates.getX() - 1, coordinates.getY() - 1);
-
         if(possibleKick.contains(checkUpLeft)) {
             return checkUpLeft;
         }
@@ -297,7 +314,6 @@ public class Board {
         if(possibleKick.size() > 0) {
             possibleMoves.clear();
         }
-
         possibleMoves.forEach(this::lightMove);
         possibleKick.forEach(this::lightKick);
 
@@ -312,7 +328,6 @@ public class Board {
         possiblePromote = pawnMoves.getPossiblePromote();
 
         possibleKick.forEach(this::lightKick);
-
         lightPawn(coordinates);
     }
 
@@ -383,12 +398,18 @@ public class Board {
 
         if(roundWithoutKick == 12) {
             isGameEnd = true;
+            play.background.stop();
+            play.drawSong.play();
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
+            play.background.stop();
+            play.loseSong.play();
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
+            play.background.stop();
+            play.winSong.play();
             new EndGame("You win! Congratulations! :)");
         }
     }

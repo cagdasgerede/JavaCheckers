@@ -20,6 +20,7 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
         Scene scene = new Scene(design.getGridPane(), 750, 750, Color.BLACK);
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
