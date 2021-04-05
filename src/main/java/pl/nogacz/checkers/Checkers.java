@@ -1,11 +1,15 @@
 package pl.nogacz.checkers;
 
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.board.Board;
+import javafx.scene.control.Slider;
+
+import  javafx.scene.layout.VBox;
 
 /**
  * @author Dawid Nogacz on 17.05.2019
@@ -20,7 +24,10 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(design.getGridPane(), 750, 750, Color.BLACK);
+        VBox stackPane = new VBox();
+        
+        stackPane.getChildren().addAll(design.getSlider(),design.getGridPane());
+        Scene scene = new Scene(stackPane, 750, 750, Color.BLACK);
         scene.setOnMouseClicked(event -> board.readMouseEvent(event));
         scene.setOnKeyReleased(event -> board.readKeyboard(event));
 

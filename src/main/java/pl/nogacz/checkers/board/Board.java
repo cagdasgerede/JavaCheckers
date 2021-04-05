@@ -42,7 +42,7 @@ public class Board {
 
 
     ///////////
-    BoardPoint boardPoint = new BoardPoint();
+    BoardPoint boardPoint = new BoardPoint(Design.getSlider());
     //////////////
     public Board() {
         addStartPawn();

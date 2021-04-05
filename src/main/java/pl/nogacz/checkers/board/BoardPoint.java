@@ -1,4 +1,4 @@
-package pl.nogacz.checkers;
+package pl.nogacz.checkers.board;
 
 import java.util.HashMap;
 import pl.nogacz.checkers.board.Coordinates;
@@ -10,11 +10,16 @@ import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.board.Board;
 import pl.nogacz.checkers.pawns.PawnClass;
 
+import javafx.scene.control.Slider;
+
 public class BoardPoint{
     int white_points;
     int black_points;
-    
+    static Slider s;
 
+    BoardPoint(Slider s){
+        this.s = s;
+    }
     private int[] getPoints(){
         int tmp_white_score = 0;
         int tmp_black_score = 0;
@@ -43,7 +48,7 @@ public class BoardPoint{
         System.out.println(
             this.toString()
         );
-
+        s.setValue(((0.0 + news[0]-1)/(-2+Board.getBoard().values().size()))*100); // left side w 
     }
 
 }

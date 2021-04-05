@@ -1,10 +1,10 @@
 package pl.nogacz.checkers.application;
-
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.*;
 import pl.nogacz.checkers.board.Coordinates;
 import pl.nogacz.checkers.pawns.PawnClass;
@@ -15,12 +15,26 @@ import pl.nogacz.checkers.pawns.PawnClass;
 public class Design {
     private static GridPane gridPane = new GridPane();
     private static Image lightMove = new Image(Resources.getPath("light.png"));
+    private static Slider slider;
 
     public Design() {
+        createSlider();
         createBoardBackground();
         generateEmptyBoard();
+        
     }
+    private static void createSlider(){
+        slider = new Slider();
+        slider.setMin(0);
+        slider.setMax(100);
+        slider.setValue(50);
+        slider.setShowTickLabels(true);
+        slider.setVisible(true);
 
+    }
+    public static Slider getSlider(){
+        return slider;
+    }
     public static GridPane getGridPane() {
         return gridPane;
     }
@@ -35,7 +49,6 @@ public class Design {
     private void generateEmptyBoard() {
         gridPane.setMinSize(750, 750);
         gridPane.setMaxSize(750, 750);
-
         for (int i = 0; i < 8; i++) {
             ColumnConstraints column = new ColumnConstraints(85);
             column.setHgrow(Priority.ALWAYS);
