@@ -6,6 +6,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
@@ -45,6 +47,24 @@ public class Board {
 
     public Board() {
         addStartPawn();
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("JavaCheckers");
+        alert.setContentText("Choose game mode");
+
+        ButtonType ComputerButton = new ButtonType("vs Computer");
+        ButtonType PlayerButton = new ButtonType("vs Player");
+
+        alert.getButtonTypes().setAll(ComputerButton, PlayerButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ComputerButton)
+            vsComputer = true;
+         else if(result.get() == PlayerButton)
+            vsPlayer = true;
+        
+        else
+            System.exit(0);
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -468,10 +488,16 @@ public class Board {
             new EndGame("Draw. Maybe you try again?");
         } else if(possibleMovesWhite.size() == 0 || pawnWhiteCount <= 1) {
             isGameEnd = true;
-            new EndGame("You loss. Maybe you try again?");
+            if(vsComputer)
+                new EndGame("You loss. Maybe you try again?");
+            if(vsPlayer)
+                new EndGame("Black win!");           
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
-            new EndGame("You win! Congratulations! :)");
+            if(vsComputer)
+                new EndGame("You win! Congratulations! :)");
+            if(vsPlayer)
+                new EndGame("White win!");
         }
     }
 
