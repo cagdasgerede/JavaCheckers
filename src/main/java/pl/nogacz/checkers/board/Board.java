@@ -199,7 +199,6 @@ public class Board {
         }
 
         lightSelect(selectedCoordinates);
-        boardPoint.updatePoints(); //=// 
         new Thread(computerSleep).start();
     }
 
