@@ -45,6 +45,7 @@ public class Board {
     private boolean isBlackRound = false;
     private boolean isWhiteRound = true;
     private Computer computer = new Computer();
+    private boolean isTest = false;
 
     public Board() {
         addStartPawn();
@@ -66,6 +67,16 @@ public class Board {
         
         else
             System.exit(0);
+    }
+
+    public Board(int gamemode){
+        isTest = true;
+        addStartPawn();
+        if(gamemode == 0)
+            vsComputer = true;
+        else
+            vsPlayer = true;
+
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -98,13 +109,19 @@ public class Board {
         board.put(new Coordinates(2, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
         board.put(new Coordinates(4, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
         board.put(new Coordinates(6, 7), new PawnClass(Pawn.PAWN, PawnColor.WHITE));
-
-        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
-            Design.addPawn(entry.getKey(), entry.getValue());
+        if(!isTest){
+            for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+                Design.addPawn(entry.getKey(), entry.getValue());
+            }
         }
     }
 
     public void readMouseEvent(MouseEvent event) {
+        Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+        handleMouse(eventCoordinates);
+    }
+    
+    public void handleMouse(Coordinates c){
         if(vsComputer){
             if(isComputerRound) {
                 return;
@@ -114,7 +131,7 @@ public class Board {
                 return;
             }
 
-            Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+            Coordinates eventCoordinates = c;
             if(isSelected) {
                 if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
                     unLightSelect(selectedCoordinates);
@@ -156,7 +173,8 @@ public class Board {
             if(isGameEnd) {
                 return;
             }
-            Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+            
+            Coordinates eventCoordinates = c;
             if(isWhiteRound){               
                 if(isSelected) {
                     if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
@@ -512,5 +530,17 @@ public class Board {
 
     public static PawnClass getPawn(Coordinates coordinates) {
         return board.get(coordinates);
+    }
+
+    public boolean getSelected(){
+        return isSelected;
+    }
+
+    public boolean getWhiteRound(){
+        return isWhiteRound;
+    }
+
+    public boolean getBlackRound(){
+        return isBlackRound;
     }
 }
