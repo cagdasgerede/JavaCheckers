@@ -38,7 +38,7 @@ public class SaveLoadOption{
         alert.close();
     } 
 
-    private static void saveTxt(String directory){
+    public static void saveTxt(String directory){
         
         File savedFile;
         if(directory.equals("desktop")){
@@ -125,7 +125,7 @@ public class SaveLoadOption{
         alert.close();
     }
 
-    private static void loadTxt(String directory){
+    public static void loadTxt(String directory){
         
         File loadedFile;
         if(directory.equals("desktop")){
