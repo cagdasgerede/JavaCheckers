@@ -13,7 +13,6 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,13 +21,13 @@ import java.util.Set;
 /**
  * @author Dawid Nogacz on 17.05.2019
  */
-public class Board {
+public class Board{
     private static HashMap<Coordinates, PawnClass> board = new HashMap<>();
 
-    private boolean isSelected = false;
+    protected static boolean isPawnSelected = false;
     private boolean newKick = false;
-    private Coordinates selectedCoordinates;
-
+    protected static boolean isEditMenuActive = false;
+    protected static Coordinates selectedCoordinates;
     private Set<Coordinates> possibleMoves = new HashSet<>();
     private Set<Coordinates> possibleKick = new HashSet<>();
     private Set<Coordinates> possiblePromote = new HashSet<>();
@@ -39,6 +38,7 @@ public class Board {
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
+    private EditMenu editMenu;
     public Board() {
         addStartPawn();
     }
@@ -80,61 +80,69 @@ public class Board {
     }
 
     public void readMouseEvent(MouseEvent event) {
-        if(isComputerRound) {
-            return;
-        }
+        if(!isEditMenuActive){
+            if(isComputerRound) {
+                return;
+            }
+            checkGameEnd();
 
-        checkGameEnd();
+            if(isGameEnd) {
+                return;
+            }
+            Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
 
-        if(isGameEnd) {
-            return;
-        }
+            if(isPawnSelected) {
+                if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+                    unLightSelect(selectedCoordinates);
+                    selectedCoordinates = null;
+                    isPawnSelected = false;
+                } else if(possibleMoves.contains(eventCoordinates)) {
+                    roundWithoutKick++;
+                    unLightSelect(selectedCoordinates);
+                    movePawn(selectedCoordinates, eventCoordinates);
+                    selectedCoordinates = null;
+                    isPawnSelected = false;
 
-        Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
-
-        if(isSelected) {
-            if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
-                unLightSelect(selectedCoordinates);
-
-                selectedCoordinates = null;
-                isSelected = false;
-            } else if(possibleMoves.contains(eventCoordinates)) {
-                roundWithoutKick++;
-
-                unLightSelect(selectedCoordinates);
-                movePawn(selectedCoordinates, eventCoordinates);
-                selectedCoordinates = null;
-                isSelected = false;
-
-                computerMove();
-            } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
-                roundWithoutKick = 0;
-
-                unLightSelect(selectedCoordinates);
-
-                if(!kickPawn(selectedCoordinates, eventCoordinates)) {
-                    isSelected = false;
-                    newKick = false;
                     computerMove();
-                } else {
-                    newKick = true;
-                    selectedCoordinates = eventCoordinates;
+                } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                    roundWithoutKick = 0;
+
+                    unLightSelect(selectedCoordinates);
+
+                    if(!kickPawn(selectedCoordinates, eventCoordinates)) {
+                        isPawnSelected = false;
+                        newKick = false;
+                        computerMove();
+                    } else {
+                        newKick = true;
+                        selectedCoordinates = eventCoordinates;
+                    }
                 }
-            }
-        } else if(eventCoordinates.isValid()) {
-            if(isFieldNotNull(eventCoordinates)) {
-                if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
-                    isSelected = true;
-                    selectedCoordinates = eventCoordinates;
-                    lightSelect(eventCoordinates);
+            } else if(eventCoordinates.isValid()) {
+                if(isFieldNotNull(eventCoordinates)) {
+                    if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
+                        isPawnSelected = true;
+                        selectedCoordinates = eventCoordinates;
+                        lightSelect(eventCoordinates);
+                    }
                 }
+                editMenu = null;
             }
+        }else {
+            Coordinates eventCoordinates = new Coordinates((int) ((event.getX() - 37) / 85), (int) ((event.getY() - 37) / 85));
+            runEditMenuFunctions(eventCoordinates);
         }
     }
 
     public void readKeyboard(KeyEvent event) {
-        if(event.getCode().equals(KeyCode.R) || event.getCode().equals(KeyCode.N)) {
+        if(event.getCode().equals(KeyCode.R)){
             EndGame.restartApplication();
+        }
+        if(event.getCode().equals(KeyCode.TAB)){
+            if(editMenu== null){
+                isEditMenuActive = true;
+                editMenu = new EditMenu();
+            }
         }
     }
 
@@ -144,7 +152,6 @@ public class Board {
         if(isGameEnd) {
             return;
         }
-
         Task<Void> computerSleep = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -163,7 +170,6 @@ public class Board {
             public void handle(WorkerStateEvent event) {
                 Coordinates moveCoordinates = computer.chooseMove(selectedCoordinates);
                 unLightSelect(selectedCoordinates);
-
                 if(computer.isKickedMove()) {
                     if(!kickPawn(selectedCoordinates, moveCoordinates)) {
                         newKick = false;
@@ -176,12 +182,9 @@ public class Board {
                     }
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
-
                     isComputerRound = false;
                     selectedCoordinates = null;
                 }
-
-
             }
         });
 
@@ -216,6 +219,7 @@ public class Board {
 
         return false;
     }
+
 
     private void movePawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
         PawnClass pawn = getPawn(oldCoordinates);
@@ -293,15 +297,15 @@ public class Board {
         possibleMoves = pawnMoves.getPossibleMoves();
         possibleKick = pawnMoves.getPossibleKick();
         possiblePromote = pawnMoves.getPossiblePromote();
-
         if(possibleKick.size() > 0) {
             possibleMoves.clear();
         }
-
         possibleMoves.forEach(this::lightMove);
         possibleKick.forEach(this::lightKick);
-
         lightPawn(coordinates);
+    }
+    protected void editLightSelect(Coordinates coordinates) {
+        editLightPawn(coordinates);
     }
 
     private void lightNewKick(Coordinates coordinates) {
@@ -321,9 +325,16 @@ public class Board {
         Design.removePawn(coordinates);
         Design.addLightPawn(coordinates, pawn);
     }
+    protected void editLightPawn(Coordinates coordinates) {
+       EditMenu.editLightPawn(coordinates);
+    }
 
     private void lightMove(Coordinates coordinates) {
         Design.addLightMove(coordinates);
+    }
+
+    protected void lightReplace(Coordinates coordinates) {
+        Design.addLightReplace(coordinates);
     }
 
     private void lightKick(Coordinates coordinates) {
@@ -340,8 +351,11 @@ public class Board {
 
         unLightPawn(coordinates);
     }
+    protected void unLightEditSelect(Coordinates coordinates) {
+        EditMenu.unLightEditSelect(coordinates);
+    }
 
-    private void unLightPawn(Coordinates coordinates) {
+    protected static void unLightPawn(Coordinates coordinates) {
         PawnClass pawn = getPawn(coordinates);
         Design.removePawn(coordinates);
         Design.addPawn(coordinates, pawn);
@@ -353,7 +367,6 @@ public class Board {
 
     private void unLightKick(Coordinates coordinates) {
         PawnClass pawn = getPawn(coordinates);
-
         if(pawn != null) {
             unLightPawn(coordinates);
         } else {
@@ -404,4 +417,99 @@ public class Board {
     public static PawnClass getPawn(Coordinates coordinates) {
         return board.get(coordinates);
     }
+
+    public static void setEditMenuActive(boolean value){
+        EditMenu.setIsEditMenuActive(value);
+    }
+    public static void setIsPawnSelected(boolean value){
+        EditMenu.setIsPawnSelected(value);
+    }
+
+    public boolean getIsPawnSelected(){
+        return  isPawnSelected;
+    }
+
+    public static Coordinates getSelectedCoordinates(){
+        return selectedCoordinates;
+    }
+
+    public  Coordinates getSelectedCoordinatesNotStatic(){
+        return selectedCoordinates;
+    }
+
+    public static void setSelectedCoordinates(Coordinates coordinates){
+        EditMenu.setSelectedCoordinates(coordinates);
+    }
+
+    private void runEditMenuFunctions(Coordinates eventCoordinates) {
+        if(isPawnSelected) {
+            if(isSameAreaSelected(eventCoordinates)){
+                if(isFieldNotNull(eventCoordinates)) {
+                    unlightPawn(eventCoordinates);
+                }
+                else {
+                    unlightReplaceLight(eventCoordinates);
+                }
+                isPawnSelected = false;
+            }
+            else if(!isFieldNotNull(eventCoordinates)){
+                if(eventCoordinates.isValid()) {
+                   lightSelectedEmptyArea(eventCoordinates);
+                }
+            }
+        }
+        else if(!isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()){
+            editMenu.forEachUnlightPossibleReplace();
+            isPawnSelected = true;
+            editMenu.getPossibleReplaces().clear();
+            editMenu.getPossibleAddPawns().clear();
+            editMenu.setAddPawnCoordinates(eventCoordinates);
+            selectedCoordinates = eventCoordinates;;
+            editMenu.getPossibleAddPawns().add(eventCoordinates);
+            lightReplace(eventCoordinates);
+        }
+        else if(isFieldNotNull(eventCoordinates) && eventCoordinates.isValid()) {
+            editMenu.forEachUnlightPossibleReplace();
+            isPawnSelected = true;
+            editMenu.setAddPawnCoordinates(eventCoordinates);
+            selectedCoordinates = eventCoordinates;
+            editLightSelect(eventCoordinates);
+        }
+    }
+
+    public boolean isSameAreaSelected(Coordinates eventCoordinates){
+        return (eventCoordinates.getY() == selectedCoordinates.getY() && eventCoordinates.getX() == selectedCoordinates.getX()
+                || eventCoordinates.getX() == editMenu.getAddPawnCoordinates().getX() && eventCoordinates.getY() ==  editMenu.getAddPawnCoordinates().getY());
+    }
+    public boolean getIsEditMenuActive() {
+        return isEditMenuActive;
+    }
+
+    public void unlightPawn(Coordinates eventCoordinates){
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        unLightEditSelect(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+    }
+
+    public void unlightReplaceLight(Coordinates eventCoordinates){
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        editMenu.unLightReplace(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+    }
+
+    public void lightSelectedEmptyArea(Coordinates eventCoordinates) {
+        editMenu.forEachUnlightPossibleReplace();
+        editMenu.forEachUnlightAddPawn();
+        lightReplace(eventCoordinates);
+        editMenu.getPossibleReplaces().clear();
+        editMenu.getPossibleAddPawns().clear();
+        editMenu.getPossibleReplaces().add(eventCoordinates);
+        editMenu.getPossibleAddPawns().add(eventCoordinates);
+        editMenu.setAddPawnCoordinates(eventCoordinates);
+    }
+
 }
