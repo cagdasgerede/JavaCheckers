@@ -22,9 +22,13 @@ import java.util.Set;
 /**
  * @author Dawid Nogacz on 17.05.2019
  */
-public class Board {
+public class Board {    
     private static HashMap<Coordinates, PawnClass> board = new HashMap<>();
-
+    
+    /*
+    //added for recursion steps
+    public HashMap<Coordinates, PawnClass> boardRecursion = new HashMap<>();
+    */
     private boolean isSelected = false;
     private boolean newKick = false;
     private Coordinates selectedCoordinates;
@@ -42,6 +46,26 @@ public class Board {
     public Board() {
         addStartPawn();
     }
+
+
+
+    /*
+    // adding new constructor for copy
+    public Board(boolean isRecursion){
+
+        for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
+            Coordinates cor = entry.getKey();
+            PawnClass pc = entry.getValue();
+            PawnClass newPC = new PawnClass(
+                pc.getPawn().isPawn() ? Pawn.PAWN : Pawn.QUEEN,
+                pc.getColor().isBlack() ? PawnColor.BLACK : PawnColor.WHITE
+            );
+            Coordinates newCoor = new Coordinates(cor.getX(),cor.getY());
+
+            board.put(newCoor, newPC);
+
+        } 
+    }*/
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
         return board;
@@ -287,22 +311,116 @@ public class Board {
         return null;
     }
 
-    private void lightSelect(Coordinates coordinates) {
+    
+    private void lightSelect(Coordinates coordinates) {        
         PawnMoves pawnMoves = new PawnMoves(coordinates, getPawn(coordinates));
 
         possibleMoves = pawnMoves.getPossibleMoves();
         possibleKick = pawnMoves.getPossibleKick();
         possiblePromote = pawnMoves.getPossiblePromote();
+        
 
         if(possibleKick.size() > 0) {
             possibleMoves.clear();
         }
 
+
         possibleMoves.forEach(this::lightMove);
         possibleKick.forEach(this::lightKick);
 
+        if(possibleMoves.size() != 0 && getPawn(coordinates).getColor() == PawnColor.WHITE){
+            lightRedCoordinates(possibleMoves,coordinates);
+        }
+        
+        if(possibleKick.size() != 0 && getPawn(coordinates).getColor() == PawnColor.WHITE && getPawn(coordinates).getPawn() == Pawn.PAWN)
+        {
+            for (Coordinates coordinates2 : possibleKick) {
+                if(getPawn(coordinates2) == null)
+                    lightGreenMove(coordinates2);   
+            }            
+        }
+
         lightPawn(coordinates);
     }
+
+
+    private void lightRedCoordinates(Set <Coordinates> moves,Coordinates coordinates){
+        
+        for (Coordinates coordinates2 : moves) {
+            //check is there a pawn
+            PawnClass rightUp = getPawn(new Coordinates(coordinates2.getX()+1,coordinates2.getY()-1));
+            PawnClass leftUp = getPawn(new Coordinates(coordinates2.getX()-1,coordinates2.getY()-1));
+            PawnClass rightDown = getPawn(new Coordinates(coordinates2.getX()+1,coordinates2.getY()+1));
+            PawnClass leftDown = getPawn(new Coordinates(coordinates2.getX()-1,coordinates2.getY()+1)); 
+
+            Coordinates rightUpCoor = new Coordinates(coordinates2.getX()+1,coordinates2.getY()-1);
+            Coordinates rightDownCoor = new Coordinates(coordinates2.getX()+1,coordinates2.getY()+1);
+            Coordinates leftUpCoor = new Coordinates(coordinates2.getX()-1,coordinates2.getY()-1);
+            Coordinates leftDownCoor = new Coordinates(coordinates2.getX()-1,coordinates2.getY()+1);
+            
+            if(rightUp != null && rightUp.getColor() == PawnColor.BLACK &&((leftDown == null && leftDownCoor.isValid()) || leftDownCoor.equals(coordinates)) ){                
+                    lightRedMove(coordinates2);        
+            }                
+            else if(rightDown != null && rightDown.getColor() == PawnColor.BLACK &&((leftUp == null && leftUpCoor.isValid()) || leftUpCoor.equals(coordinates))){                
+                    lightRedMove(coordinates2);
+            }
+
+            else if( leftUp != null && leftUp.getColor() == PawnColor.BLACK &&((rightDown == null && rightDownCoor.isValid())|| rightDownCoor.equals(coordinates))){                
+                    lightRedMove(coordinates2);
+            }
+            else if( leftDown != null && leftDown.getColor() == PawnColor.BLACK && ((rightUp == null&& rightUpCoor.isValid()) || rightUpCoor.equals(coordinates) )){                
+                    lightRedMove(coordinates2);
+            }
+            else{     
+                lightGreenMoves(coordinates2);
+            }
+        }
+    }
+
+    private void lightGreenMoves(Coordinates coordinates2){
+        Coordinates rightUpCoor = new Coordinates(coordinates2.getX()+1,coordinates2.getY()-1);
+        Coordinates rightDownCoor = new Coordinates(coordinates2.getX()+1,coordinates2.getY()+1);
+        Coordinates leftUpCoor = new Coordinates(coordinates2.getX()-1,coordinates2.getY()-1);
+        Coordinates leftDownCoor = new Coordinates(coordinates2.getX()-1,coordinates2.getY()+1);
+
+        Coordinates rightUpUpCoor = new Coordinates(rightUpCoor.getX()+1,rightUpCoor.getY()-1);
+        Coordinates rightDownDownCoor = new Coordinates(rightDownCoor.getX()+1,rightDownCoor.getY()+1);
+        Coordinates leftUpUpCoor = new Coordinates(leftUpCoor.getX()-1,leftUpCoor.getY()-1);
+        Coordinates leftDownDownCoor = new Coordinates(leftDownCoor.getX()-1,leftDownCoor.getY()+1);
+
+        if(getPawn(rightUpCoor) != null &&getPawn(rightUpCoor).getColor() == PawnColor.WHITE && getPawn(rightUpUpCoor) != null && getPawn(rightUpUpCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if(getPawn(rightDownCoor) != null && getPawn(rightDownCoor).getColor() == PawnColor.WHITE && getPawn(rightDownDownCoor) != null && getPawn(rightDownDownCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if(getPawn(leftUpCoor) != null  && getPawn(leftUpCoor).getColor() == PawnColor.WHITE && getPawn(leftUpUpCoor) != null &&  getPawn(leftUpUpCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if(getPawn(leftDownCoor) != null && getPawn(leftDownCoor).getColor() == PawnColor.WHITE && getPawn(leftDownDownCoor) != null && getPawn(leftDownDownCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if(getPawn(leftDownCoor) != null && getPawn(leftDownCoor).getColor() == PawnColor.WHITE && getPawn(rightUpCoor) != null && getPawn(rightUpCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if( getPawn(rightDownCoor) != null && getPawn(rightDownCoor).getColor() == PawnColor.WHITE && getPawn(leftUpCoor) != null && getPawn(leftUpCoor).getColor() == PawnColor.BLACK){
+            lightGreenMove(coordinates2);
+        }
+        else if( !rightUpCoor.isValid() &&getPawn(rightUpCoor) == null){
+            lightGreenMove(coordinates2);
+        }
+        else if( !leftUpCoor.isValid() &&getPawn(leftUpCoor) == null){
+            lightGreenMove(coordinates2);
+        }
+        else if( !leftDownCoor.isValid() &&getPawn(leftDownCoor) == null){
+            lightGreenMove(coordinates2);
+        }
+        else if( !leftUpCoor.isValid() &&getPawn(rightDownCoor) == null){
+            lightGreenMove(coordinates2);
+        }
+
+    }
+
 
     private void lightNewKick(Coordinates coordinates) {
         PawnMoves pawnMoves = new PawnMoves(coordinates, getPawn(coordinates));
@@ -326,6 +444,14 @@ public class Board {
         Design.addLightMove(coordinates);
     }
 
+    private void lightRedMove(Coordinates coordinates){
+        Design.addLightRedMove(coordinates);
+    }
+    private void lightGreenMove(Coordinates coordinates){
+        
+        Design.addLightGreenMove(coordinates);
+    }
+
     private void lightKick(Coordinates coordinates) {
         PawnClass pawn = getPawn(coordinates);
 
@@ -334,7 +460,7 @@ public class Board {
         }
     }
 
-    private void unLightSelect(Coordinates coordinates) {
+    private void unLightSelect(Coordinates coordinates) {        
         possibleMoves.forEach(this::unLightMove);
         possibleKick.forEach(this::unLightKick);
 
