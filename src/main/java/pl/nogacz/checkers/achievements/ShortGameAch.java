@@ -15,7 +15,7 @@ public class ShortGameAch extends Achievement{
         if(countOfTime < 45)
             unlock = true;
 
-        if(unlock == true){
+        if(unlock == true && getisAchUnlocked() == false){
             UnlockAch();
             showAchievement();
         }

@@ -15,7 +15,7 @@ public class NumberOfMovesAch extends Achievement{
         if(countOfMoves > 25)
             unlock = true;
 
-        if(unlock == true){
+        if(unlock == true && getisAchUnlocked() == false){
             UnlockAch();
             showAchievement();
         }

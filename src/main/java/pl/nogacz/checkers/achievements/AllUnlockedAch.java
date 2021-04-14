@@ -17,7 +17,7 @@ public class AllUnlockedAch extends Achievement{
                 unlock = false;
         }
 
-        if(unlock == true){
+        if(unlock == true && getisAchUnlocked() == false){
             UnlockAch();
             showAchievement();
         }

@@ -15,11 +15,10 @@ public class LongGameAch extends Achievement{
         if(countOfTime > 120)
             unlock = true;
 
-        if(unlock == true){
-            UnlockAch();
-            showAchievement();
+        if(unlock == true && getisAchUnlocked() == false){
+                UnlockAch();
+                showAchievement();
         }
-
     }
     
 }
