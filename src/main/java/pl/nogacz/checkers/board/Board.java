@@ -13,6 +13,7 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+import pl.nogacz.checkers.achievements.Achievement;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +39,10 @@ public class Board {
 
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
+
+    private int CountOfMoves;
+    private long startTime;
+    private long endTime;
 
     public Board() {
         addStartPawn();
@@ -77,6 +82,10 @@ public class Board {
         for(Map.Entry<Coordinates, PawnClass> entry : board.entrySet()) {
             Design.addPawn(entry.getKey(), entry.getValue());
         }
+
+        this.startTime = System.currentTimeMillis() / 1000;
+        CountOfMoves = 0;
+
     }
 
     public void readMouseEvent(MouseEvent event) {
@@ -230,6 +239,8 @@ public class Board {
 
         board.remove(oldCoordinates);
         board.put(newCoordinates, pawn);
+
+        CountOfMoves++;
     }
 
     private boolean kickPawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
@@ -389,6 +400,8 @@ public class Board {
             new EndGame("You loss. Maybe you try again?");
         } else if(possibleMovesBlack.size() == 0 || pawnBlackCount <= 1) {
             isGameEnd = true;
+            endTime = System.currentTimeMillis() / 1000;
+            Achievement.generateAchievements(CountOfMoves, (endTime-startTime) );
             new EndGame("You win! Congratulations! :)");
         }
     }
