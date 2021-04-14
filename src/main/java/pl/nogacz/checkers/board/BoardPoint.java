@@ -21,22 +21,16 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 
 public class BoardPoint{
+
     int white_points;
     int black_points;
 
-    enum Turn{ 
-        white,
-        black
-    }
-
-    static Turn turn = Turn.white;
-
     static Slider s;
 
-    static int queenValue = 100;
+    static int queenValue = 200;
     static int pawnValue = 2;
     static int positionMultiplier = 5;
-    static int turnAdventage = 20;
+
     
 
     BoardPoint(Slider s){
@@ -49,18 +43,7 @@ public class BoardPoint{
 
     }
 
-    private boolean isWhitesTurn(){
-        return this.turn.equals(Turn.white);
-    }
-    private boolean isBlacksTurn(){
-        return this.turn.equals(Turn.black);
-    }
-    private void changeTurns(){
-        if(isBlacksTurn())
-            this.turn = Turn.white;
-        else
-            this.turn = Turn.black;
-    }
+
 
     private int[] getPoints(){
         /**
@@ -87,7 +70,7 @@ public class BoardPoint{
                if(pawn.getPawn().equals(Pawn.QUEEN)){
                 tmp_black_score += queenValue;
                }else{
-                tmp_black_score += pawnValue * positionMultiplier * ( coordinate.getY());
+                tmp_black_score += pawnValue * positionMultiplier * (1 + coordinate.getY());
                }
                
                 
@@ -95,19 +78,13 @@ public class BoardPoint{
             if(pawn.getPawn().equals(Pawn.QUEEN)){
                 tmp_white_score += queenValue;
                }else{
-                tmp_white_score += pawnValue * positionMultiplier * (7- coordinate.getY());
+                tmp_white_score += pawnValue * positionMultiplier * (8- coordinate.getY());
                }
                
            }
            index++;
        }
-       /*if(isBlacksTurn()){
-        tmp_black_score += turnAdventage;
-        }
-        if(isWhitesTurn()){
-            tmp_white_score += turnAdventage;
-        }
-        changeTurns();*/
+
        int[] newPoints = {tmp_white_score, tmp_black_score};
        return newPoints;
     }
@@ -122,9 +99,6 @@ public class BoardPoint{
     void updatePoints(){
         int[] news = getPoints();
         setPoints(news[0], news[1]);
-        System.out.println(
-            this.toString()
-        );
         this.s.setMax(news[0] + news[1]);
         s.setValue(news[0]);
     }
