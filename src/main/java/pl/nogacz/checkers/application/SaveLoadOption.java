@@ -29,7 +29,8 @@ public class SaveLoadOption{
     private static final String DIRECTORY_HOME = System.getProperty("user.home");
     private static final String DOCUMENT_NAME = "CheckersSaved.txt";
 
-
+    private static final String LOG_FILE = "log.txt";
+    private static final String ERROR_MESSAGE = "File can not found!";
 
     public static void save(){
 
@@ -114,7 +115,12 @@ public class SaveLoadOption{
 
         catch(IOException e){
 
-             e.printStackTrace();
+            try(FileWriter logfile = new FileWriter(LOG_FILE)) {
+                logfile.write(ERROR_MESSAGE);
+            }
+            catch(IOException ee){
+                ee.printStackTrace();
+            } 
         }   
     }
 
@@ -199,7 +205,12 @@ public class SaveLoadOption{
 
         catch(IOException e){
 
-            e.printStackTrace();
+            try(FileWriter logfile = new FileWriter(LOG_FILE)) {
+                logfile.write(ERROR_MESSAGE);
+            }
+            catch(IOException ee){
+                ee.printStackTrace();
+            } 
         }   
     }
 
