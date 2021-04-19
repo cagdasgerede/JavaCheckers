@@ -15,25 +15,41 @@ public class SaveLoadOption{
 
     private static HashMap<Coordinates, PawnClass> board = Board.getBoard();
 
+    private static final int SIZE = 8;
+    private static final String LOCATION_BUTTON_DESKTOP = "Desktop";
+    private static final String LOCATION_BUTTON_HOME = "Home Directory";
+    private static final String LOCATION_BUTTON_LOCAL = "Local Game Directory";
+
+    private static final String SAVE_TITLE = "Save the Game!";
+    private static final String SAVE_CONTENT_TEXT = "Please choose the directory that game will be saved to.";
+    private static final String LOAD_TITLE = "Load the Game!";
+    private static final String LOAD_CONTENT_TEXT = "Please choose the directory that game will be loaded from.";
+
+    private static final String DIRECTORY_DESKTOP = System.getProperty("user.home") + "/Desktop";
+    private static final String DIRECTORY_HOME = System.getProperty("user.home");
+    private static final String DOCUMENT_NAME = "CheckersSaved.txt";
+
+
+
     public static void save(){
 
         Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setTitle("Save the Game!");
-        alert.setContentText("Please choose the directory that game will be saved to.");
+        alert.setTitle(SAVE_TITLE);
+        alert.setContentText(SAVE_CONTENT_TEXT);
 
-        ButtonType saveToDesktop = new ButtonType("Desktop");
-        ButtonType saveToHome = new ButtonType("Home Directory");
-        ButtonType saveToLocal = new ButtonType("Local Game Directory");  
+        ButtonType saveToDesktop = new ButtonType(LOCATION_BUTTON_DESKTOP);
+        ButtonType saveToHome = new ButtonType(LOCATION_BUTTON_HOME);
+        ButtonType saveToLocal = new ButtonType(LOCATION_BUTTON_LOCAL);  
 
         alert.getButtonTypes().setAll(saveToDesktop, saveToHome, saveToLocal, ButtonType.CANCEL);
         Optional<ButtonType> selected = alert.showAndWait();
 
         if (selected.get() == saveToDesktop)
-            saveTxt("desktop"); 
+            saveTxt(LOCATION_BUTTON_DESKTOP); 
         if (selected.get() == saveToHome)
-            saveTxt("home"); 
+            saveTxt(LOCATION_BUTTON_HOME); 
         if (selected.get() == saveToLocal)
-            saveTxt("local");         
+            saveTxt(LOCATION_BUTTON_LOCAL);         
 
         alert.close();
     } 
@@ -41,22 +57,22 @@ public class SaveLoadOption{
     public static void saveTxt(String directory){
         
         File savedFile;
-        if(directory.equals("desktop")){
-            savedFile = new File(System.getProperty("user.home") + "/Desktop", "CheckersSaved.txt");
+        if(directory.equals(LOCATION_BUTTON_DESKTOP)){
+            savedFile = new File(DIRECTORY_DESKTOP, DOCUMENT_NAME);
         }
-        else if(directory.equals("home")){
-            savedFile = new File(System.getProperty("user.home"), "CheckersSaved.txt");
+        else if(directory.equals(LOCATION_BUTTON_HOME)){
+            savedFile = new File(DIRECTORY_HOME, DOCUMENT_NAME);
         }
         else{
-            savedFile = new File("CheckersSaved.txt");
+            savedFile = new File(DOCUMENT_NAME);
         }
         
         ArrayList <String> lines = new ArrayList<>();
         // QW: 1, W: 2, QB: 3, B: 4, NULL: 5
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < SIZE; i++){
 
             String line = "";
-            for(int j = 0; j < 8; j++){
+            for(int j = 0; j < SIZE; j++){
 
                 Coordinates coordinate = new Coordinates(i,j);
                 if(Board.isFieldNotNull(coordinate)){
@@ -90,7 +106,7 @@ public class SaveLoadOption{
 
         try(FileWriter save = new FileWriter(savedFile)) {
               
-            for(int i = 0; i < 8; i++){
+            for(int i = 0; i < SIZE; i++){
                 save.write(lines.get(i) + "\n");
             }    
             save.close();
@@ -105,22 +121,22 @@ public class SaveLoadOption{
     public static void load(){
 
         Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setTitle("Load the Game!");
-        alert.setContentText("Please choose the directory that game will be loaded from.");
+        alert.setTitle(LOAD_TITLE);
+        alert.setContentText(LOAD_CONTENT_TEXT);
 
-        ButtonType loadFromDesktop = new ButtonType("Desktop");
-        ButtonType loadFromHome = new ButtonType("Home Directory");
-        ButtonType loadFromLocal = new ButtonType("Local Game Directory");  
+        ButtonType loadFromDesktop = new ButtonType(LOCATION_BUTTON_DESKTOP);
+        ButtonType loadFromHome = new ButtonType(LOCATION_BUTTON_HOME);
+        ButtonType loadFromLocal = new ButtonType(LOCATION_BUTTON_LOCAL);
 
         alert.getButtonTypes().setAll(loadFromDesktop, loadFromHome, loadFromLocal, ButtonType.CANCEL);
         Optional<ButtonType> selected = alert.showAndWait();
 
         if (selected.get() == loadFromDesktop)
-            loadTxt("desktop"); 
+            loadTxt(LOCATION_BUTTON_DESKTOP); 
         if (selected.get() == loadFromHome)
-            loadTxt("home"); 
+            loadTxt(LOCATION_BUTTON_HOME); 
         if (selected.get() == loadFromLocal)
-            loadTxt("local");         
+            loadTxt(LOCATION_BUTTON_LOCAL);         
 
         alert.close();
     }
@@ -128,20 +144,20 @@ public class SaveLoadOption{
     public static void loadTxt(String directory){
         
         File loadedFile;
-        if(directory.equals("desktop")){
-            loadedFile = new File(System.getProperty("user.home") + "/Desktop", "CheckersSaved.txt");
+        if(directory.equals(LOCATION_BUTTON_DESKTOP)){
+            loadedFile = new File(DIRECTORY_DESKTOP, DOCUMENT_NAME);
         }
-        else if(directory.equals("home")){
-            loadedFile = new File(System.getProperty("user.home"), "CheckersSaved.txt");
-        } 
-        else {
-            loadedFile = new File("CheckersSaved.txt");
+        else if(directory.equals(LOCATION_BUTTON_HOME)){
+            loadedFile = new File(DIRECTORY_HOME, DOCUMENT_NAME);
+        }
+        else{
+            loadedFile = new File(DOCUMENT_NAME);
         }
 
         try(BufferedReader load = new BufferedReader(new FileReader(loadedFile))){
 
-            for(int x = 0; x < 8; x++) {
-                for(int y = 0; y < 8; y++) {
+            for(int x = 0; x < SIZE; x++) {
+                for(int y = 0; y < SIZE; y++) {
 
                     Coordinates coordinates = new Coordinates(x,y);
                     Design.removePawn(coordinates);
@@ -149,10 +165,10 @@ public class SaveLoadOption{
                 }
             }
 
-            for(int x = 0; x < 8; x++) {
+            for(int x = 0; x < SIZE; x++) {
 
                 String line = decrypt(load.readLine());
-                for(int y = 0; y < 8; y++) {
+                for(int y = 0; y < SIZE; y++) {
                     // QW: 1, W: 2, QB: 3, B: 4, NULL: 5
                     char num = line.charAt(y);
                     if(num != '5'){
@@ -187,13 +203,13 @@ public class SaveLoadOption{
         }   
     }
 
-    private static String encrypt(String line){
+    public static String encrypt(String line){
 
         int decimal = Integer.parseInt(line);
         return Integer.toBinaryString(decimal);
     }
 
-    private static String decrypt(String line){
+    public static String decrypt(String line){
 
         int decimal = Integer.parseInt(line,2);
         return decimal+"";
