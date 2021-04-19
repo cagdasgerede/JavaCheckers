@@ -1,8 +1,5 @@
 package main.java.pl.nogacz.checkers.application;
 
-import javafx.scene.control.*;
-import java.io.*;
-import java.util.*;
 import pl.nogacz.checkers.Checkers;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.pawns.Pawn;
@@ -10,6 +7,20 @@ import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.board.Board;
 import pl.nogacz.checkers.board.Coordinates;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException; 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class SaveLoadOption{
 
