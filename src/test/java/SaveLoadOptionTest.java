@@ -7,10 +7,18 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 
-import java.io.*;
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.io.IOException; 
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import main.java.pl.nogacz.checkers.application.SaveLoadOption;
@@ -58,5 +66,18 @@ public class SaveLoadOptionTest{
         }
 
         assertTrue(control);
+    }
+
+    @Test void encryptSuccessfully() throws IOException{
+
+        int number = 181101008;
+        assertEquals(Integer.toBinaryString(number), SaveLoadOption.encrypt(number+""));
+    }
+
+    @Test void decryptSuccesfully() throws IOException{
+
+        int number = 112155156;
+        String binaryNumber = Integer.toBinaryString(number);
+        assertEquals(number + "", SaveLoadOption.decrypt(binaryNumber));
     }
 }
