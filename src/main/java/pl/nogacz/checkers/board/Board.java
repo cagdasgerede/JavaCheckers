@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
+import java.util.Arrays;
 
 /**
  * @author Dawid Nogacz on 17.05.2019
@@ -123,134 +124,166 @@ public class Board {
     
     public void handleMouse(Coordinates c){
         if(vsComputer){
-            if(isComputerRound) {
-                return;
-            }
-            checkGameEnd();
-            if(isGameEnd) {
-                return;
-            }
+            handleRoundvsComputer(c);
+        }
 
-            Coordinates eventCoordinates = c;
+        else if(vsPlayer){            
+            handleRoundvsPlayer(c);
+        }
+    }
+
+    private void handleRoundvsComputer(Coordinates c){
+        if(isComputerRound) {
+            return;
+        }
+        checkGameEnd();
+        if(isGameEnd) {
+            return;
+        }
+
+        Coordinates eventCoordinates = c;
+        if(isSelected) {
+            if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+                unLightSelect(selectedCoordinates);
+                selectedCoordinates = null;
+                isSelected = false;
+            } 
+            else if(possibleMoves.contains(eventCoordinates)) {
+                roundWithoutKick++;
+                unLightSelect(selectedCoordinates);
+                movePawn(selectedCoordinates, eventCoordinates);
+                selectedCoordinates = null;
+                isSelected = false;
+                computerMove();
+            } 
+            else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                roundWithoutKick = 0;
+                unLightSelect(selectedCoordinates);
+                if(!kickPawn(selectedCoordinates, eventCoordinates)) {
+                    isSelected = false;
+                    newKick = false;
+                    computerMove();
+                } 
+                else {
+                    newKick = true;
+                    selectedCoordinates = eventCoordinates;
+                }
+            }
+        } 
+        else if(eventCoordinates.isValid()) {
+            if(isFieldNotNull(eventCoordinates)) {
+                if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
+                    isSelected = true;
+                    selectedCoordinates = eventCoordinates;
+                    lightSelect(eventCoordinates);
+                }
+            }
+        }
+    }
+
+    private void handleRoundvsPlayer(Coordinates c){
+        checkGameEnd();
+        if(isGameEnd) {
+            return;
+        }
+            
+        Coordinates eventCoordinates = new Coordinates(c.getX(),c.getY());
+        if(isWhiteRound){               
             if(isSelected) {
                 if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
-                    unLightSelect(selectedCoordinates);
+                    if(!isTest){
+                        unLightSelect(selectedCoordinates);
+                    }
                     selectedCoordinates = null;
                     isSelected = false;
-                } else if(possibleMoves.contains(eventCoordinates)) {
+                } 
+                else if(possibleMoves.contains(eventCoordinates)) {
                     roundWithoutKick++;
-                    unLightSelect(selectedCoordinates);
+                    if(!isTest){
+                        unLightSelect(selectedCoordinates);
+                    }
                     movePawn(selectedCoordinates, eventCoordinates);
                     selectedCoordinates = null;
                     isSelected = false;
-                    computerMove();
-                } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                    isWhiteRound = false;
+                    isBlackRound = true;                       
+                } 
+                else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                     roundWithoutKick = 0;
-                    unLightSelect(selectedCoordinates);
+                    if(!isTest){
+                        unLightSelect(selectedCoordinates);
+                    }
                     if(!kickPawn(selectedCoordinates, eventCoordinates)) {
                         isSelected = false;
                         newKick = false;
-                        computerMove();
-                    } else {
+                        isWhiteRound = false;
+                        isBlackRound = true;
+                    } 
+                    else {
                         newKick = true;
                         selectedCoordinates = eventCoordinates;
                     }
                 }
-            } else if(eventCoordinates.isValid()) {
+            } 
+            else if(eventCoordinates.isValid()) {
                 if(isFieldNotNull(eventCoordinates)) {
                     if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
                         isSelected = true;
-                        selectedCoordinates = eventCoordinates;
-                        lightSelect(eventCoordinates);
+                        selectedCoordinates = eventCoordinates;                          
+                        lightSelect(eventCoordinates);                   
                     }
                 }
             }
         }
-
-
-        else if(vsPlayer){
-            checkGameEnd();
-            if(isGameEnd) {
-                return;
-            }
-            
-            Coordinates eventCoordinates = c;
-            if(isWhiteRound){               
-                if(isSelected) {
-                    if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+        else if(isBlackRound){
+            if(isSelected) {
+                if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
+                    if(!isTest){
                         unLightSelect(selectedCoordinates);
-                        selectedCoordinates = null;
-                        isSelected = false;
-                    } else if(possibleMoves.contains(eventCoordinates)) {
-                        roundWithoutKick++;
-                        unLightSelect(selectedCoordinates);
-                        movePawn(selectedCoordinates, eventCoordinates);
-                        selectedCoordinates = null;
-                        isSelected = false;
-                        isWhiteRound = false;
-                        isBlackRound = true;                       
-                    } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
-                        roundWithoutKick = 0;
-                        unLightSelect(selectedCoordinates);
-                        if(!kickPawn(selectedCoordinates, eventCoordinates)) {
-                            isSelected = false;
-                            newKick = false;
-                            isWhiteRound = false;
-                            isBlackRound = true;
-                        } else {
-                            newKick = true;
-                            selectedCoordinates = eventCoordinates;
-                        }
                     }
-                } else if(eventCoordinates.isValid()) {
-                    if(isFieldNotNull(eventCoordinates)) {
-                        if(getPawn(eventCoordinates).getColor().isWhite() && isPossiblePawn(eventCoordinates, PawnColor.WHITE)) {
-                            isSelected = true;
-                            selectedCoordinates = eventCoordinates;
-                            lightSelect(eventCoordinates);
-                        }
+                    selectedCoordinates = null;
+                    isSelected = false;
+                } 
+                else if(possibleMoves.contains(eventCoordinates)) {
+                    roundWithoutKick++;
+                    if(!isTest){
+                        unLightSelect(selectedCoordinates);
+                    }
+                    movePawn(selectedCoordinates, eventCoordinates);
+                    selectedCoordinates = null;
+                    isSelected = false;
+                    isWhiteRound = true;
+                    isBlackRound = false;                       
+                } 
+                else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
+                    roundWithoutKick = 0;
+                    if(!isTest){
+                        unLightSelect(selectedCoordinates);
+                    }
+                    if(!kickPawn(selectedCoordinates, eventCoordinates)) {
+                        isSelected = false;
+                        newKick = false;
+                        isWhiteRound = true;
+                        isBlackRound = false;
+                    } 
+                    else {
+                        newKick = true;
+                        selectedCoordinates = eventCoordinates;
                     }
                 }
-            }
-            else if(isBlackRound){
-                if(isSelected) {
-                    if(selectedCoordinates.equals(eventCoordinates) && !newKick) {
-                        unLightSelect(selectedCoordinates);
-                        selectedCoordinates = null;
-                        isSelected = false;
-                    } else if(possibleMoves.contains(eventCoordinates)) {
-                        roundWithoutKick++;
-                        unLightSelect(selectedCoordinates);
-                        movePawn(selectedCoordinates, eventCoordinates);
-                        selectedCoordinates = null;
-                        isSelected = false;
-                        isWhiteRound = true;
-                        isBlackRound = false;                       
-                    } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
-                        roundWithoutKick = 0;
-                        unLightSelect(selectedCoordinates);
-                        if(!kickPawn(selectedCoordinates, eventCoordinates)) {
-                            isSelected = false;
-                            newKick = false;
-                            isWhiteRound = true;
-                            isBlackRound = false;
-                        } else {
-                            newKick = true;
-                            selectedCoordinates = eventCoordinates;
-                        }
-                    }
-                } else if(eventCoordinates.isValid()) {
-                    if(isFieldNotNull(eventCoordinates)) {
-                        if(getPawn(eventCoordinates).getColor().isBlack() && isPossiblePawn(eventCoordinates, PawnColor.BLACK)) {
-                            isSelected = true;
-                            selectedCoordinates = eventCoordinates;
-                            lightSelect(eventCoordinates);
-                        }
+            } 
+            else if(eventCoordinates.isValid()) {
+                if(isFieldNotNull(eventCoordinates)) {
+                    if(getPawn(eventCoordinates).getColor().isBlack() && isPossiblePawn(eventCoordinates, PawnColor.BLACK)) {
+                        isSelected = true;
+                        selectedCoordinates = eventCoordinates;           
+                        lightSelect(eventCoordinates);             
                     }
                 }
             }
         }
     }
+    
 
 
     public void readKeyboard(KeyEvent event) {
@@ -345,9 +378,11 @@ public class Board {
             pawn = new PawnClass(Pawn.QUEEN, pawn.getColor());
         }
 
-        Design.removePawn(oldCoordinates);
-        Design.removePawn(newCoordinates);
-        Design.addPawn(newCoordinates, pawn);
+        if(!isTest){
+            Design.removePawn(oldCoordinates);
+            Design.removePawn(newCoordinates);
+            Design.addPawn(newCoordinates, pawn);
+        }
 
         board.remove(oldCoordinates);
         board.put(newCoordinates, pawn);
@@ -362,9 +397,11 @@ public class Board {
 
         Coordinates enemyCoordinates = getEnemyCoordinates(newCoordinates);
 
-        Design.removePawn(oldCoordinates);
-        Design.removePawn(enemyCoordinates);
-        Design.addPawn(newCoordinates, pawn);
+        if(!isTest){
+            Design.removePawn(oldCoordinates);
+            Design.removePawn(enemyCoordinates);
+            Design.addPawn(newCoordinates, pawn);
+        }
 
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
@@ -418,11 +455,11 @@ public class Board {
         if(possibleKick.size() > 0) {
             possibleMoves.clear();
         }
-
-        possibleMoves.forEach(this::lightMove);
-        possibleKick.forEach(this::lightKick);
-
-        lightPawn(coordinates);
+        if(!isTest){
+            possibleMoves.forEach(this::lightMove);
+            possibleKick.forEach(this::lightKick);
+            lightPawn(coordinates);
+        }
     }
 
     private void lightNewKick(Coordinates coordinates) {

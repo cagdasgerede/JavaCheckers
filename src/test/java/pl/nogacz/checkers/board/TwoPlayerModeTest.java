@@ -7,24 +7,47 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TwoPlayerModeTest{
-
-    @Test void TestWhenBlackRoundWhitePieceCanBeSelected(){
-        // firstly select 2,5 then move the pawn to 3,4 then round should be black's then, when mouse clicked on a 
-        // white pawn isSelected should be false because round is black's
-        Board b = new Board (1);
-        Coordinates c = new Coordinates(210,465);
-        Coordinates c2 = new Coordinates(300,385);
-        b.handleMouse(c);
-        b.handleMouse(c2);
-        Coordinates c3 = new Coordinates(300,385);
-        b.handleMouse(c3);
-        assertFalse(b.getSelected());
-    }
-
     @Test void TestWhenStartIsWhiteRound(){
         Board b = new Board (1);
         assertTrue(b.getWhiteRound());
     }
 
+    @Test void TestWhenWhiteRoundBlackPieceCannotBeSelected(){
+        Board b = new Board(1);
+        Coordinates c = new Coordinates(3,2);
+        // click a black pawn when it is white's round(at start)
+        b.handleMouse(c);
+        // it should not be selected
+        assertFalse(b.getSelected());
+    }
+
+    @Test void TestWhenWhiteRoundWhitePieceCanBeSelected(){
+        Board b = new Board(1);
+        Coordinates c = new Coordinates(2,5);
+        // click a white pawn
+        b.handleMouse(c);
+        assertTrue(b.getSelected());
+    }
+
+    @Test void TestWhenBlackRoundBlackPieceCanBeSelected(){
+        Board b = new Board (1);
+        // move a white piece
+        Coordinates c = new Coordinates(2,5);
+        Coordinates c2 = new Coordinates(3,4);
+        b.handleMouse(c);
+        b.handleMouse(c2);
+        // now it is black's round
+        Coordinates c3 = new Coordinates(3,2);
+        // click a black pawn
+        b.handleMouse(c3);
+        // it should be selected
+        assertTrue(b.getSelected());
+        // unclick
+        b.handleMouse(c3);
+        // click a white pawn
+        b.handleMouse(c2);
+        // it should not be selected
+        assertFalse(b.getSelected());
+    }
 }
 
