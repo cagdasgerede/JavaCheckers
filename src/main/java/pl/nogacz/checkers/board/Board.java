@@ -13,6 +13,7 @@ import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
 import pl.nogacz.checkers.pawns.PawnMoves;
+import pl.nogacz.checkers.board.BoardPoint;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,8 +40,13 @@ public class Board {
     private boolean isComputerRound = false;
     private Computer computer = new Computer();
 
+
+
+    BoardPoint boardPoint = new BoardPoint(Design.getSlider());//=//
+    
     public Board() {
         addStartPawn();
+        boardPoint.updatePoints(1); //=// 
     }
 
     public static HashMap<Coordinates, PawnClass> getBoard() {
@@ -105,8 +111,10 @@ public class Board {
                 movePawn(selectedCoordinates, eventCoordinates);
                 selectedCoordinates = null;
                 isSelected = false;
+                
 
                 computerMove();
+                boardPoint.updatePoints(-1);
             } else if(possibleKick.contains(eventCoordinates) && !isFieldNotNull(eventCoordinates)) {
                 roundWithoutKick = 0;
 
@@ -115,7 +123,9 @@ public class Board {
                 if(!kickPawn(selectedCoordinates, eventCoordinates)) {
                     isSelected = false;
                     newKick = false;
+                    
                     computerMove();
+                    boardPoint.updatePoints(-1);
                 } else {
                     newKick = true;
                     selectedCoordinates = eventCoordinates;
@@ -169,6 +179,7 @@ public class Board {
                         newKick = false;
                         isComputerRound = false;
                         selectedCoordinates = null;
+                        boardPoint.updatePoints(1);
                     } else {
                         newKick = true;
                         selectedCoordinates = moveCoordinates;
@@ -176,7 +187,7 @@ public class Board {
                     }
                 } else {
                     movePawn(selectedCoordinates, moveCoordinates);
-
+                    boardPoint.updatePoints(1);
                     isComputerRound = false;
                     selectedCoordinates = null;
                 }
@@ -191,9 +202,8 @@ public class Board {
         if(!newKick) {
             selectedCoordinates = computer.choosePawn();
         }
-
+        
         lightSelect(selectedCoordinates);
-
         new Thread(computerSleep).start();
     }
 
@@ -227,9 +237,10 @@ public class Board {
         Design.removePawn(oldCoordinates);
         Design.removePawn(newCoordinates);
         Design.addPawn(newCoordinates, pawn);
-
         board.remove(oldCoordinates);
         board.put(newCoordinates, pawn);
+        //boardPoint.updatePoints();//=// 
+        boardPoint.isCompRound = isComputerRound;
     }
 
     private boolean kickPawn(Coordinates oldCoordinates, Coordinates newCoordinates) {
@@ -248,9 +259,10 @@ public class Board {
         board.remove(oldCoordinates);
         board.remove(enemyCoordinates);
         board.put(newCoordinates, pawn);
-
+        //boardPoint.updatePoints(); //=// 
+        boardPoint.isCompRound = isComputerRound;
         PawnMoves pawnMoves = new PawnMoves(newCoordinates, pawn);
-
+        
         if(pawnMoves.getPossibleKick().size() > 0) {
             lightNewKick(newCoordinates);
             return true;
@@ -287,7 +299,7 @@ public class Board {
         return null;
     }
 
-    private void lightSelect(Coordinates coordinates) {
+    private void lightSelect(Coordinates coordinates) {//gg
         PawnMoves pawnMoves = new PawnMoves(coordinates, getPawn(coordinates));
 
         possibleMoves = pawnMoves.getPossibleMoves();
@@ -300,7 +312,6 @@ public class Board {
 
         possibleMoves.forEach(this::lightMove);
         possibleKick.forEach(this::lightKick);
-
         lightPawn(coordinates);
     }
 

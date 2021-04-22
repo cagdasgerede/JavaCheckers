@@ -2,6 +2,8 @@ package pl.nogacz.checkers.pawns;
 
 import pl.nogacz.checkers.board.Board;
 import pl.nogacz.checkers.board.Coordinates;
+import pl.nogacz.checkers.pawns.Pawn;
+
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,16 +11,16 @@ import java.util.Set;
 /**
  * @author Dawid Nogacz on 18.05.2019
  */
-public class PawnMoves {
+public class PawnMoves { //tekrar private yap
     private Coordinates coordinates;
     private PawnClass pawn;
 
     private Set<Coordinates> possibleMoves = new HashSet<>();
-    private Set<Coordinates> possibleKick = new HashSet<>();
-    private Set<Coordinates> possiblePromote = new HashSet<>();
+     private Set<Coordinates> possibleKick = new HashSet<>();
+     private Set<Coordinates> possiblePromote = new HashSet<>();
 
-    private boolean isKick = false;
-    private Coordinates kickedCoordinates = null;
+     private boolean isKick = false;
+     private Coordinates kickedCoordinates = null;
 
     public PawnMoves(Coordinates coordinates, PawnClass pawn) {
         this.coordinates = coordinates;
@@ -26,6 +28,8 @@ public class PawnMoves {
 
         calculateMoves();
     }
+
+
 
     private void calculateMoves() {
         if(pawn.getPawn().isPawn()) {
