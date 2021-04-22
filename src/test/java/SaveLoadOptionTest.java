@@ -53,7 +53,6 @@ public class SaveLoadOptionTest{
         }
 
         SaveLoadOption.saveTxt("local");
-        //SaveLoadOption.loadTxt("local");
 
         for(int x = 0; x < 8 ; x++){
             for(int y = 0; y < 8; y++){

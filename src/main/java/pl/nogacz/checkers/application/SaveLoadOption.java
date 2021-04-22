@@ -80,7 +80,7 @@ public class SaveLoadOption{
         }
         
         ArrayList <String> lines = new ArrayList<>();
-        // QW: 1, W: 2, QB: 3, B: 4, NULL: 5
+
         for(int i = 0; i < SIZE; i++){
 
             String line = "";
@@ -186,7 +186,7 @@ public class SaveLoadOption{
 
                 String line = decrypt(load.readLine());
                 for(int y = 0; y < SIZE; y++) {
-                    // QW: 1, W: 2, QB: 3, B: 4, NULL: 5
+
                     char num = line.charAt(y);
                     if(num != '5'){
 
