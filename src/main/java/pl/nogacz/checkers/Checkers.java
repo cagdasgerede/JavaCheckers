@@ -24,7 +24,7 @@ public class Checkers extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        VBox stackPane = new VBox();
+        VBox stackPane = new VBox();  //=//
         
         stackPane.getChildren().addAll(design.getSlider(),design.getGridPane());
         Scene scene = new Scene(stackPane, 750, 750, Color.BLACK);

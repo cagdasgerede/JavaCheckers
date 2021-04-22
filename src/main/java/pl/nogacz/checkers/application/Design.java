@@ -13,17 +13,18 @@ import pl.nogacz.checkers.pawns.PawnClass;
  * @author Dawid Nogacz on 17.05.2019
  */
 public class Design {
+    
     private static GridPane gridPane = new GridPane();
     private static Image lightMove = new Image(Resources.getPath("light.png"));
-    private static Slider slider;
+    private static Slider slider;//=//
 
     public Design() {
-        createSlider();
+        createSlider();//=//
         createBoardBackground();
         generateEmptyBoard();
         
     }
-    private static void createSlider(){
+    private static void createSlider(){//=//
         slider = new Slider();
         slider.setMin(0);
         slider.setMax(100);
@@ -32,7 +33,7 @@ public class Design {
         slider.setVisible(true);
 
     }
-    public static Slider getSlider(){
+    public static Slider getSlider(){//=//
         return slider;
     }
     public static GridPane getGridPane() {
