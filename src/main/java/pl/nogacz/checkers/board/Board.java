@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import pl.nogacz.checkers.application.Design;
 import pl.nogacz.checkers.application.Computer;
 import pl.nogacz.checkers.application.EndGame;
+import main.java.pl.nogacz.checkers.application.SaveLoadOption;
 import pl.nogacz.checkers.pawns.Pawn;
 import pl.nogacz.checkers.pawns.PawnClass;
 import pl.nogacz.checkers.pawns.PawnColor;
@@ -135,6 +136,14 @@ public class Board {
     public void readKeyboard(KeyEvent event) {
         if(event.getCode().equals(KeyCode.R) || event.getCode().equals(KeyCode.N)) {
             EndGame.restartApplication();
+        }
+
+        if(event.getCode().equals(KeyCode.S)) {
+            SaveLoadOption.save();
+        }
+
+        if(event.getCode().equals(KeyCode.L)) {
+            SaveLoadOption.load();
         }
     }
 
